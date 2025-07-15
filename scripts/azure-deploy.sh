@@ -156,11 +156,14 @@ log_info "Copying files for deployment..."
 
 # Always copy essential files first
 cp package*.json "$BUILD_DIR/"
-if [ -f "server.js" ]; then
+if [ -f "server-azure.js" ]; then
+    cp server-azure.js "$BUILD_DIR/server.js"
+    log_success "✓ server-azure.js copied as server.js"
+elif [ -f "server.js" ]; then
     cp server.js "$BUILD_DIR/"
     log_success "✓ server.js copied"
 else
-    log_error "server.js not found! This is required for Azure deployment."
+    log_error "Neither server-azure.js nor server.js found! This is required for Azure deployment."
     exit 1
 fi
 
@@ -197,27 +200,23 @@ if [ -d "public" ]; then
     cp -r public "$BUILD_DIR/"
 fi
 
-# Copy the standalone build if available
-if [ -d ".next/standalone" ]; then
-    log_info "✓ Using standalone build"
-    cp -r .next/standalone/* "$BUILD_DIR/"
-    # Copy static files to the standalone build location
-    if [ -d ".next/static" ]; then
-        mkdir -p "$BUILD_DIR/.next/"
-        cp -r .next/static "$BUILD_DIR/.next/"
-    fi
-    # Ensure public directory is also copied to standalone
-    if [ -d "public" ]; then
-        cp -r public "$BUILD_DIR/"
-    fi
-else
-    log_warning "No standalone build found, copying regular build"
+# For Azure, copy the regular build instead of standalone
+log_info "✓ Using regular Next.js build for Azure compatibility"
+if [ -d ".next" ]; then
     cp -r .next "$BUILD_DIR/"
-    # Copy node_modules for regular builds
-    if [ -d "node_modules" ]; then
-        log_info "Copying node_modules (this may take a while)..."
-        cp -r node_modules "$BUILD_DIR/"
-    fi
+    log_success "✓ .next directory copied"
+else
+    log_error "No .next build directory found!"
+    exit 1
+fi
+
+# Copy node_modules for production
+if [ -d "node_modules" ]; then
+    log_info "Copying node_modules (this may take a while)..."
+    cp -r node_modules "$BUILD_DIR/"
+    log_success "✓ node_modules copied"
+else
+    log_warning "No node_modules directory found - will rely on Azure build"
 fi
 
 # Copy configuration files
