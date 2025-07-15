@@ -1,54 +1,24 @@
 /**
  * Tests for the frontend API utilities
+ * Updated to work with real Phish.net data
  */
 
 import { phishApi } from '../src/lib/simpleLocalPhishApi';
 import type { Song, FilterOptions } from '../src/types/phish';
 
-// Mock data for testing
-const mockProcessedData = {
-  songs: [
-    {
-      name: 'You Enjoy Myself',
-      slug: 'you-enjoy-myself',
-      timesPlayed: 1234,
-      firstPlayed: '1986-02-03',
-      lastPlayed: '2024-07-14',
-      gap: 1,
-      averageLength: 18.5,
-      tags: ['Jam Vehicle', 'Classic', '1.0 Era'],
-      longestJam: {
-        length: 45.2,
-        date: '1995-12-09',
-        venue: 'Hersheypark Arena',
-        city: 'Hershey',
-        state: 'PA',
-        showid: 1234567
-      }
-    },
-    {
-      name: 'Fluffhead',
-      slug: 'fluffhead',
-      timesPlayed: 567,
-      firstPlayed: '1986-10-15',
-      lastPlayed: '2024-06-30',
-      gap: 15,
-      averageLength: 14.2,
-      tags: ['Classic'],
-      longestJam: {
-        length: 16.8,
-        date: '1994-06-18',
-        venue: 'Veterans Memorial Auditorium',
-        city: 'Columbus',
-        state: 'OH',
-        showid: 1234568
-      }
-    },
-    {
-      name: 'Wilson',
-      slug: 'wilson',
-      timesPlayed: 890,
-      firstPlayed: '1986-02-03',
+// Real data expectations based on actual Phish.net data
+const EXPECTED_DATA_STRUCTURE = {
+  minSongs: 800,           // At least 800+ songs in catalog
+  minShows: 2000,          // At least 2000+ shows
+  topSongs: {
+    'You Enjoy Myself': { minPlays: 500, tags: ['Frequent', 'Jam Vehicle', 'Classic', '1.0 Era'] },
+    'Possum': { minPlays: 450, tags: ['Frequent', '1.0 Era'] },
+    'Mike\'s Song': { minPlays: 400, tags: ['Frequent', '1.0 Era'] },
+    'Chalk Dust Torture': { minPlays: 400, tags: ['Frequent', '1.0 Era'] }
+  },
+  jamVehicles: ['You Enjoy Myself', 'Tweezer', 'Ghost', 'Harry Hood'],
+  classicSongs: ['You Enjoy Myself', 'Fluffhead', 'Wilson', 'Golgi Apparatus']
+};
       lastPlayed: '2024-07-10',
       gap: 5,
       averageLength: 4.1,
