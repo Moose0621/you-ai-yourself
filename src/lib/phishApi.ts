@@ -1,7 +1,15 @@
 import { Song, Show, PhishNetApiResponse } from '@/types/phish'
+import { apiCache, generateCacheKey, performanceMonitor } from './cache'
 
 const API_BASE_URL = 'https://api.phish.net/v5'
 const API_KEY = process.env.NEXT_PUBLIC_PHISH_API_KEY || 'YOUR_API_KEY_HERE'
+
+// Cache configuration
+const CACHE_TTL = {
+  SONGS: 24 * 60 * 60 * 1000, // 24 hours
+  SHOWS: 6 * 60 * 60 * 1000,  // 6 hours
+  SONG_DETAIL: 24 * 60 * 60 * 1000 // 24 hours
+}
 
 // Sample data for demonstration - replace with real API calls
 const SAMPLE_SONGS: Song[] = [
@@ -109,16 +117,33 @@ const SAMPLE_SHOWS: Show[] = [
 ]
 
 class PhishApi {
-  private async fetchFromApi(endpoint: string): Promise<any> {
+  private async fetchFromApi(endpoint: string, params?: Record<string, any>): Promise<any> {
+    // Generate cache key
+    const cacheKey = generateCacheKey.apiCall(endpoint, params)
+    
+    // Check cache first
+    const cached = apiCache.get(cacheKey)
+    if (cached) {
+      return cached
+    }
+
     try {
       const url = `${API_BASE_URL}/${endpoint}.json?apikey=${API_KEY}`
-      const response = await fetch(url)
+      
+      const response = await performanceMonitor.measureAsync(
+        `api:${endpoint}`,
+        () => fetch(url)
+      )
       
       if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`)
       }
       
       const data: PhishNetApiResponse = await response.json()
+      
+      // Cache the response
+      apiCache.set(cacheKey, data, CACHE_TTL.SHOWS)
+      
       return data
     } catch (error) {
       console.error('API fetch error:', error)
@@ -127,21 +152,51 @@ class PhishApi {
   }
 
   async getRecentShows(): Promise<Show[]> {
+    const cacheKey = 'recent-shows'
+    
     try {
+      // Check cache first
+      const cached = apiCache.get(cacheKey)
+      if (cached) {
+        return cached
+      }
+
       // Uncomment the following lines when you have a valid API key
       // const data = await this.fetchFromApi('shows/recent')
-      // return data.data.map(this.transformShow)
+      // const shows = data.data.map(this.transformShow)
       
-      // For now, return sample data
-      return SAMPLE_SHOWS
+      // For now, return sample data with caching
+      const shows = await performanceMonitor.measureAsync(
+        'load-sample-shows',
+        async () => {
+          // Simulate API delay
+          await new Promise(resolve => setTimeout(resolve, 100))
+          return SAMPLE_SHOWS
+        }
+      )
+      
+      // Cache the result
+      apiCache.set(cacheKey, shows, CACHE_TTL.SHOWS)
+      
+      return shows
     } catch (error) {
       console.error('Error fetching recent shows:', error)
-      return SAMPLE_SHOWS
+      // Return cached data if available, otherwise fallback
+      const cached = apiCache.get(cacheKey)
+      return cached || SAMPLE_SHOWS
     }
   }
 
   async getSongStats(): Promise<Song[]> {
+    const cacheKey = 'song-stats'
+    
     try {
+      // Check cache first
+      const cached = apiCache.get(cacheKey)
+      if (cached) {
+        return cached
+      }
+
       // Uncomment the following lines when you have a valid API key
       // const songsData = await this.fetchFromApi('songs')
       // const songs = await Promise.all(
@@ -152,24 +207,58 @@ class PhishApi {
       // )
       // return songs
       
-      // For now, return sample data
-      return SAMPLE_SONGS
+      // For now, return sample data with caching
+      const songs = await performanceMonitor.measureAsync(
+        'load-sample-songs',
+        async () => {
+          // Simulate API delay
+          await new Promise(resolve => setTimeout(resolve, 150))
+          return SAMPLE_SONGS
+        }
+      )
+      
+      // Cache the result
+      apiCache.set(cacheKey, songs, CACHE_TTL.SONGS)
+      
+      return songs
     } catch (error) {
       console.error('Error fetching song stats:', error)
-      return SAMPLE_SONGS
+      // Return cached data if available, otherwise fallback
+      const cached = apiCache.get(cacheKey)
+      return cached || SAMPLE_SONGS
     }
   }
 
   async getSummer2025Shows(): Promise<Show[]> {
+    const cacheKey = 'summer-2025-shows'
+    
     try {
+      // Check cache first
+      const cached = apiCache.get(cacheKey)
+      if (cached) {
+        return cached
+      }
+
       // Get shows from summer 2025 (adjust dates as needed)
       // const data = await this.fetchFromApi('shows/showdate/2025-07-01/2025-07-31')
-      // return data.data.map(this.transformShow)
+      // const shows = data.data.map(this.transformShow)
       
-      return SAMPLE_SHOWS
+      const shows = await performanceMonitor.measureAsync(
+        'load-summer-shows',
+        async () => {
+          await new Promise(resolve => setTimeout(resolve, 80))
+          return SAMPLE_SHOWS
+        }
+      )
+      
+      // Cache the result
+      apiCache.set(cacheKey, shows, CACHE_TTL.SHOWS)
+      
+      return shows
     } catch (error) {
       console.error('Error fetching summer 2025 shows:', error)
-      return SAMPLE_SHOWS
+      const cached = apiCache.get(cacheKey)
+      return cached || SAMPLE_SHOWS
     }
   }
 
@@ -197,25 +286,87 @@ class PhishApi {
   }
 
   async getShowsByYear(year: number): Promise<Show[]> {
+    const cacheKey = `shows-${year}`
+    
     try {
+      // Check cache first
+      const cached = apiCache.get(cacheKey)
+      if (cached) {
+        return cached
+      }
+
       // const data = await this.fetchFromApi(`shows/year/${year}`)
-      // return data.data
-      return SAMPLE_SHOWS
+      // const shows = data.data.map(this.transformShow)
+      
+      const shows = await performanceMonitor.measureAsync(
+        `load-shows-${year}`,
+        async () => {
+          await new Promise(resolve => setTimeout(resolve, 60))
+          return SAMPLE_SHOWS
+        }
+      )
+      
+      // Cache the result
+      apiCache.set(cacheKey, shows, CACHE_TTL.SHOWS)
+      
+      return shows
     } catch (error) {
       console.error(`Error fetching shows for ${year}:`, error)
-      return []
+      const cached = apiCache.get(cacheKey)
+      return cached || []
     }
   }
 
   async getSongData(songSlug: string): Promise<Song | null> {
+    const cacheKey = `song-${songSlug}`
+    
     try {
+      // Check cache first
+      const cached = apiCache.get(cacheKey)
+      if (cached) {
+        return cached
+      }
+
       // const data = await this.fetchFromApi(`songdata/slug/${songSlug}`)
-      // return data.data[0]
-      return SAMPLE_SONGS.find(song => song.slug === songSlug) || null
+      // const song = this.transformSong(data.data[0])
+      
+      const song = await performanceMonitor.measureAsync(
+        `load-song-${songSlug}`,
+        async () => {
+          await new Promise(resolve => setTimeout(resolve, 30))
+          return SAMPLE_SONGS.find(song => song.slug === songSlug) || null
+        }
+      )
+      
+      // Cache the result
+      if (song) {
+        apiCache.set(cacheKey, song, CACHE_TTL.SONG_DETAIL)
+      }
+      
+      return song
     } catch (error) {
       console.error(`Error fetching song data for ${songSlug}:`, error)
-      return null
+      const cached = apiCache.get(cacheKey)
+      return cached || null
     }
+  }
+
+  // Cache management methods
+  clearCache(): void {
+    apiCache.clear()
+  }
+
+  invalidateCache(pattern?: string): number {
+    if (pattern) {
+      return apiCache.invalidatePattern(pattern)
+    } else {
+      apiCache.clear()
+      return 0
+    }
+  }
+
+  getCacheStats() {
+    return apiCache.getStats()
   }
 }
 
