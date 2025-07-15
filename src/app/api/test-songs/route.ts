@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { phishApi } from '@/lib/phishApi'
+import { phishApi } from '@/lib/simpleLocalPhishApi'
 
 export async function GET() {
   try {
