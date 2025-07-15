@@ -1,0 +1,198 @@
+name: Scheduled Maintenance
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+    # Run weekly dependency check on Sundays at 4 AM UTC
+    - cron: '0 4 * * 0'
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  NODE_VERSION: '21'
+  PYTHON_VERSION: '3.12'
+
+jobs:
+  # Daily maintenance tasks
+  daily-maintenance:
+    name: Daily Maintenance
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 2 * * *' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Setup Python environment
+      run: |
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: Health check
+      run: npm run health-check
+      
+    - name: Refresh data if needed
+      run: |
+        if [ -f scripts/fetch_phish_data.py ]; then
+          source .venv/bin/activate
+          npm run data:refresh
+        fi
+        
+    - name: Create data backup
+      run: npm run data:backup
+      
+    - name: Security audit
+      run: npm run security:audit
+      continue-on-error: true
+      
+    - name: Upload backup to Azure Storage
+      uses: azure/CLI@v1
+      if: success()
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          az storage blob upload-batch \
+            --destination daily-backups \
+            --source backups/ \
+            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
+            --account-key ${{ secrets.AZURE_STORAGE_KEY }} \
+            --overwrite
+            
+    - name: Clean up old backups locally
+      run: |
+        find backups/ -name "*.tar.gz" -mtime +7 -delete || true
+
+  # Weekly dependency check
+  weekly-dependency-check:
+    name: Weekly Dependency Check
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 4 * * 0' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check for outdated dependencies
+      id: deps-check
+      run: |
+        npm run deps:check > deps-report.txt 2>&1 || true
+        if [ -s deps-report.txt ]; then
+          echo "outdated=true" >> $GITHUB_OUTPUT
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          cat deps-report.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        else
+          echo "outdated=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Check for security vulnerabilities
+      id: security-check
+      run: |
+        npm audit --audit-level=moderate > security-report.txt 2>&1 || true
+        if [ -s security-report.txt ]; then
+          echo "vulnerabilities=true" >> $GITHUB_OUTPUT
+          echo "security<<EOF" >> $GITHUB_OUTPUT
+          cat security-report.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        else
+          echo "vulnerabilities=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Create maintenance issue
+      if: steps.deps-check.outputs.outdated == 'true' || steps.security-check.outputs.vulnerabilities == 'true'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const outdated = '${{ steps.deps-check.outputs.outdated }}' === 'true';
+          const vulnerabilities = '${{ steps.security-check.outputs.vulnerabilities }}' === 'true';
+          
+          let title = 'Weekly Maintenance Report';
+          let body = '## Automated Maintenance Report\\n\\n';
+          let labels = ['maintenance'];
+          
+          if (outdated) {
+            title = 'Outdated Dependencies Found';
+            labels.push('dependencies');
+            body += '### 📦 Outdated Dependencies\\n\\n';
+            body += '```\\n${{ steps.deps-check.outputs.report }}\\n```\\n\\n';
+            body += 'Run `npm run deps:update` to update dependencies.\\n\\n';
+          }
+          
+          if (vulnerabilities) {
+            if (outdated) title = 'Dependencies and Security Issues Found';
+            else title = 'Security Vulnerabilities Found';
+            labels.push('security');
+            body += '### 🔒 Security Vulnerabilities\\n\\n';
+            body += '```\\n${{ steps.security-check.outputs.security }}\\n```\\n\\n';
+            body += 'Run `npm audit fix` to resolve security issues.\\n\\n';
+          }
+          
+          body += '---\\n*This issue was created automatically by the maintenance workflow.*';
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: labels
+          });
+
+  # Health monitoring
+  health-monitoring:
+    name: Health Monitoring
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Comprehensive health check
+      run: npm run health-check
+      
+    - name: Check production endpoint
+      if: github.ref == 'refs/heads/main'
+      run: |
+        if [ ! -z "${{ secrets.AZURE_WEBAPP_URL }}" ]; then
+          curl -f ${{ secrets.AZURE_WEBAPP_URL }}/api/health || echo "Production health check failed"
+        fi
+        
+    - name: Check staging endpoint  
+      run: |
+        if [ ! -z "${{ secrets.AZURE_WEBAPP_URL_STAGING }}" ]; then
+          curl -f ${{ secrets.AZURE_WEBAPP_URL_STAGING }}/api/health || echo "Staging health check failed"
+        fi
