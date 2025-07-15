@@ -8,6 +8,7 @@ import { SongTable } from '@/components/SongTable'
 import { FilterControls } from '@/components/FilterControls'
 import { ToursExplorer } from '@/components/ToursExplorer'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { ErrorDisplay } from '@/components/ErrorDisplay'
 import { phishApi } from '@/lib/simpleLocalPhishApi'
 import { Song, Show, FilterOptions } from '@/types/phish'
 
@@ -36,9 +37,18 @@ export default function Home() {
         setError(null) // Clear any previous errors
         console.log('🎵 Loading Phish data...')
         
-        // Load summer 2025 shows and song statistics
-        const showsData = await phishApi.getSummer2025Shows()
-        const songsData = await phishApi.getSongStats()
+        // Add timeout to prevent infinite loading
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Data loading timeout - please refresh the page')), 10000)
+        )
+        
+        // Load summer 2025 shows and song statistics with timeout
+        const dataPromise = Promise.all([
+          phishApi.getSummer2025Shows(),
+          phishApi.getSongStats()
+        ])
+        
+        const [showsData, songsData] = await Promise.race([dataPromise, timeoutPromise]) as [Show[], Song[]]
         
         console.log('📊 Loaded data:', { 
           shows: showsData.length, 
@@ -131,8 +141,15 @@ export default function Home() {
     setFilters({ ...filters, selectedTags: newSelectedTags })
   }
 
+  const handleRetry = () => {
+    setError(null)
+    setLoading(true)
+    // Force re-run of the effect
+    setActiveTab(activeTab === 'statistics' ? 'statistics' : 'statistics')
+  }
+
   if (loading && activeTab === 'statistics') return <LoadingSpinner />
-  if (error && activeTab === 'statistics') return <div className="text-center text-red-600 p-8">Error: {error}</div>
+  if (error && activeTab === 'statistics') return <ErrorDisplay error={error} onRetry={handleRetry} />
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

@@ -1,25 +1,57 @@
-import processedData from '../../public/processed-data.json'
 import { Song, Show } from '@/types/phish'
 
 /**
- * Simple Local Phish API - Uses direct JSON import for reliability
+ * Simple Local Phish API - Uses fetch for better browser compatibility
  */
 class SimpleLocalPhishApi {
-  private songs: Song[]
-  private shows: Show[]
+  private songs: Song[] = []
+  private shows: Show[] = []
+  private initialized = false
 
   constructor() {
-    // Direct import ensures data is available at build time
-    this.songs = processedData.songs as Song[]
-    this.shows = processedData.shows as Show[]
-    
-    console.log('✅ Initialized with', this.songs.length, 'songs and', this.shows.length, 'shows')
+    // We'll initialize data on first request for better compatibility
+  }
+
+  private async initializeData(): Promise<void> {
+    if (this.initialized) return
+
+    try {
+      console.log('🔄 Fetching processed data...')
+      
+      // Use fetch to load the JSON data - more Safari compatible
+      const response = await fetch('/processed-data.json')
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`)
+      }
+      
+      const processedData = await response.json()
+      
+      this.songs = processedData.songs as Song[]
+      this.shows = processedData.shows as Show[]
+      this.initialized = true
+      
+      console.log('✅ Initialized with', this.songs.length, 'songs and', this.shows.length, 'shows')
+    } catch (error) {
+      console.error('❌ Failed to initialize data:', error)
+      // Fallback: try to import directly if fetch fails
+      try {
+        const processedData = await import('../../public/processed-data.json')
+        this.songs = processedData.default.songs as Song[]
+        this.shows = processedData.default.shows as Show[]
+        this.initialized = true
+        console.log('✅ Fallback: Initialized with direct import')
+      } catch (fallbackError) {
+        console.error('❌ Fallback also failed:', fallbackError)
+        throw new Error('Unable to load Phish data. Please refresh the page.')
+      }
+    }
   }
 
   /**
    * Get all song statistics
    */
   async getSongStats(): Promise<Song[]> {
+    await this.initializeData()
     console.log('📊 Loading songs from local cache...')
     return this.songs
   }
@@ -28,6 +60,7 @@ class SimpleLocalPhishApi {
    * Get shows from the summer 2025 tour (July-September)
    */
   async getSummer2025Shows(): Promise<Show[]> {
+    await this.initializeData()
     console.log('🎪 Loading 2025 summer shows from local cache...')
     
     const summer2025Shows = this.shows.filter(show => {
@@ -46,6 +79,7 @@ class SimpleLocalPhishApi {
    * Get all shows for a specific year
    */
   async getShowsByYear(year: number): Promise<Show[]> {
+    await this.initializeData()
     console.log(`🎪 Loading ${year} shows from local cache...`)
     
     const yearShows = this.shows.filter(show => {
@@ -61,6 +95,7 @@ class SimpleLocalPhishApi {
    * Search songs by name
    */
   async searchSongs(query: string): Promise<Song[]> {
+    await this.initializeData()
     const normalizedQuery = query.toLowerCase()
     
     return this.songs.filter(song => 
@@ -72,6 +107,7 @@ class SimpleLocalPhishApi {
    * Get top songs by play count
    */
   async getTopSongsByPlayCount(limit: number = 20): Promise<Song[]> {
+    await this.initializeData()
     return [...this.songs]
       .sort((a, b) => b.timesPlayed - a.timesPlayed)
       .slice(0, limit)

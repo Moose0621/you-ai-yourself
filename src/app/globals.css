@@ -26,6 +26,45 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/* Safari-specific compatibility fixes */
+@supports (-webkit-appearance: none) {
+  /* Ensure animations work in Safari */
+  .animate-spin {
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Fix flexbox issues in Safari */
+  .flex {
+    display: -webkit-flex;
+    display: flex;
+  }
+  
+  .items-center {
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  
+  .justify-center {
+    -webkit-justify-content: center;
+    justify-content: center;
+  }
+}
+
+/* Ensure consistent font rendering across browsers */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Add fallback for CSS Grid in older Safari versions */
+@supports not (display: grid) {
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
