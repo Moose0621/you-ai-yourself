@@ -1,34 +1,72 @@
-import { Song } from '@/types/phish'
+import { Song, FilterOptions } from '@/types/phish'
+import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 
 interface SongTableProps {
   songs: Song[]
+  sortBy: FilterOptions['sortBy']
+  sortOrder: FilterOptions['sortOrder']
+  onSortChange: (sortBy: FilterOptions['sortBy']) => void
+  onTagClick?: (tag: string) => void
 }
 
-export function SongTable({ songs }: SongTableProps) {
+export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }: SongTableProps) {
+  const handleHeaderClick = (column: FilterOptions['sortBy']) => {
+    onSortChange(column)
+  }
+
+  const getSortIcon = (column: FilterOptions['sortBy']) => {
+    if (sortBy !== column) {
+      return <ChevronUpIcon className="w-4 h-4 text-gray-400 opacity-50" />
+    }
+    return sortOrder === 'asc' ? 
+      <ChevronUpIcon className="w-4 h-4 text-blue-600" /> : 
+      <ChevronDownIcon className="w-4 h-4 text-blue-600" />
+  }
+
+  const HeaderCell = ({ 
+    column, 
+    children, 
+    className = '' 
+  }: { 
+    column: FilterOptions['sortBy']
+    children: React.ReactNode
+    className?: string 
+  }) => (
+    <th 
+      className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors ${className}`}
+      onClick={() => handleHeaderClick(column)}
+    >
+      <div className="flex items-center space-x-1">
+        <span>{children}</span>
+        {getSortIcon(column)}
+      </div>
+    </th>
+  )
+
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <HeaderCell column="name">
                 Song Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              </HeaderCell>
+              <HeaderCell column="timesPlayed">
                 Times Played
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              </HeaderCell>
+              <HeaderCell column="averageLength">
                 Avg Length
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              </HeaderCell>
+              <HeaderCell column="averageLength">
                 Longest Jam
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              </HeaderCell>
+              <HeaderCell column="firstPlayed">
                 First Played
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              </HeaderCell>
+              <HeaderCell column="lastPlayed">
                 Last Played
-              </th>
+              </HeaderCell>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Tags
               </th>
@@ -36,7 +74,7 @@ export function SongTable({ songs }: SongTableProps) {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {songs.slice(0, 50).map((song, index) => (
-              <tr key={song.slug} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+              <tr key={song.slug} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors`}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{song.name}</div>
                 </td>
@@ -67,13 +105,20 @@ export function SongTable({ songs }: SongTableProps) {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex flex-wrap gap-1">
                     {song.tags?.slice(0, 3).map((tag, tagIndex) => (
-                      <span
+                      <button
                         key={tagIndex}
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                        onClick={() => onTagClick?.(tag)}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors cursor-pointer"
+                        title={`Filter by ${tag}`}
                       >
                         {tag}
-                      </span>
+                      </button>
                     ))}
+                    {(song.tags?.length || 0) > 3 && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                        +{(song.tags?.length || 0) - 3}
+                      </span>
+                    )}
                   </div>
                 </td>
               </tr>

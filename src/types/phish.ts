@@ -39,11 +39,12 @@ export interface Show {
 }
 
 export interface FilterOptions {
-  sortBy: 'timesPlayed' | 'averageLength' | 'name'
+  sortBy: 'timesPlayed' | 'averageLength' | 'name' | 'firstPlayed' | 'lastPlayed'
   sortOrder: 'asc' | 'desc'
   minLength: number
   maxLength: number
   searchTerm: string
+  selectedTags: string[]
 }
 
 export interface ApiResponse<T> {

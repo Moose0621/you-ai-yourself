@@ -1,0 +1,9 @@
+<step title="Incoming Request" date="2025-07-15T21:11:48.806" instance="ab9000" url="/api/deployments/latest" method="GET" type="request" pid="823,1,5" Accept="*/*" Host="phish-stats-app.scm.azurewebsites.net" User-Agent="AZURECLI/2.53.1 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bas..." x-ms-client-request-id="50958838-61bf-11f0-a12f-9a27c1767c35" X-ARR-LOG-ID="50958838-61bf-11f0-a12f-9a27c1767c35" CLIENT-IP="32.221.53.120:61573" X-SITE-DEPLOYMENT-ID="phish-stats-app" WAS-DEFAULT-HOSTNAME="phish-stats-app.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/latest" X-Client-IP="32.221.53.120" X-Client-Port="61573" >
+  <step title="Cleanup Xml Logs" date="2025-07-15T21:11:48.822" /><!-- duration: 18ms -->
+  <step title="DeploymentService.GetResult" date="2025-07-15T21:11:48.881" >
+    <step title="DeploymentService.GetLatestDeployment" date="2025-07-15T21:11:48.900" >
+      <step title="DeploymentManager.GetResults" date="2025-07-15T21:11:48.928" /><!-- duration: 357ms -->
+    </step><!-- duration: 404ms -->
+  </step><!-- duration: 462ms -->
+  <step title="Outgoing response" date="2025-07-15T21:11:49.356" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 17ms -->
+</step><!-- duration: 569ms -->

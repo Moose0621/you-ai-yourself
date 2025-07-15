@@ -1,5 +1,5 @@
 import { FilterOptions, Song } from '@/types/phish'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 
 interface FilterControlsProps {
   filters: FilterOptions
@@ -12,6 +12,17 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
   const [filteredSuggestions, setFilteredSuggestions] = useState<Song[]>([])
   const searchInputRef = useRef<HTMLInputElement>(null)
   const suggestionsRef = useRef<HTMLDivElement>(null)
+
+  // Get all unique tags from songs
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>()
+    songs.forEach(song => {
+      if (song.tags) {
+        song.tags.forEach(tag => tagSet.add(tag))
+      }
+    })
+    return Array.from(tagSet).sort()
+  }, [songs])
 
   const handleSortChange = (sortBy: FilterOptions['sortBy']) => {
     onFiltersChange({ ...filters, sortBy })
@@ -86,9 +97,28 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
     onFiltersChange({ ...filters, minLength, maxLength })
   }
 
+  const handleTagToggle = (tag: string) => {
+    const selectedTags = filters.selectedTags || []
+    const newSelectedTags = selectedTags.includes(tag)
+      ? selectedTags.filter(t => t !== tag)
+      : [...selectedTags, tag]
+    onFiltersChange({ ...filters, selectedTags: newSelectedTags })
+  }
+
+  const clearAllFilters = () => {
+    onFiltersChange({
+      sortBy: 'timesPlayed',
+      sortOrder: 'desc',
+      minLength: 0,
+      maxLength: 60,
+      searchTerm: '',
+      selectedTags: []
+    })
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="grid md:grid-cols-4 gap-4">
+      <div className="grid md:grid-cols-4 gap-4 mb-6">
         {/* Search */}
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -148,6 +178,8 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
             <option value="timesPlayed">Times Played</option>
             <option value="averageLength">Song Length (avg/longest)</option>
             <option value="name">Song Name</option>
+            <option value="firstPlayed">First Played</option>
+            <option value="lastPlayed">Last Played</option>
           </select>
         </div>
 
@@ -190,6 +222,44 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
             />
           </div>
         </div>
+      </div>
+
+      {/* Tag Filtering */}
+      <div className="border-t pt-4">
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Filter by Tags ({(filters.selectedTags || []).length} selected)
+          </label>
+          {((filters.selectedTags && filters.selectedTags.length > 0) || filters.searchTerm || filters.minLength > 0 || filters.maxLength < 60) && (
+            <button
+              onClick={clearAllFilters}
+              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+            >
+              Clear All Filters
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+          {allTags.map((tag) => {
+            const isSelected = (filters.selectedTags || []).includes(tag)
+            return (
+              <button
+                key={tag}
+                onClick={() => handleTagToggle(tag)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  isSelected
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {tag}
+              </button>
+            )
+          })}
+        </div>
+        {allTags.length === 0 && (
+          <p className="text-sm text-gray-500 italic">No tags available in current data</p>
+        )}
       </div>
     </div>
   )

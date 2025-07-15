@@ -22,7 +22,8 @@ export default function Home() {
     sortOrder: 'desc',
     minLength: 0,
     maxLength: 60,
-    searchTerm: ''
+    searchTerm: '',
+    selectedTags: []
   })
 
   useEffect(() => {
@@ -67,13 +68,23 @@ export default function Home() {
   }, [activeTab])
 
   const filteredSongs = songs.filter(song => {
+    // Search term filter
     if (filters.searchTerm && !song.name.toLowerCase().includes(filters.searchTerm.toLowerCase())) {
       return false
     }
-    // For length filtering, use the longest jam length if available, otherwise average length
+    // Length filter - use the longest jam length if available, otherwise average length
     const songLength = song.longestJam?.length || song.averageLength
     if (songLength < filters.minLength || songLength > filters.maxLength) {
       return false
+    }
+    // Tags filter
+    if (filters.selectedTags && filters.selectedTags.length > 0) {
+      const hasSelectedTag = filters.selectedTags.some(selectedTag => 
+        song.tags && song.tags.includes(selectedTag)
+      )
+      if (!hasSelectedTag) {
+        return false
+      }
     }
     return true
   }).sort((a, b) => {
@@ -88,10 +99,37 @@ export default function Home() {
         return (aLength - bLength) * multiplier
       case 'name':
         return a.name.localeCompare(b.name) * multiplier
+      case 'firstPlayed':
+        const aFirst = a.firstPlayed || '9999-99-99'
+        const bFirst = b.firstPlayed || '9999-99-99'
+        return aFirst.localeCompare(bFirst) * multiplier
+      case 'lastPlayed':
+        const aLast = a.lastPlayed || '0000-00-00'
+        const bLast = b.lastPlayed || '0000-00-00'
+        return aLast.localeCompare(bLast) * multiplier
       default:
         return 0
     }
   })
+
+  const handleSortChange = (newSortBy: FilterOptions['sortBy']) => {
+    // If clicking the same column, toggle sort order
+    if (newSortBy === filters.sortBy) {
+      setFilters({ ...filters, sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc' })
+    } else {
+      // If clicking a new column, use default sort order for that column
+      const defaultOrder = newSortBy === 'name' || newSortBy === 'firstPlayed' || newSortBy === 'lastPlayed' ? 'asc' : 'desc'
+      setFilters({ ...filters, sortBy: newSortBy, sortOrder: defaultOrder })
+    }
+  }
+
+  const handleTagClick = (tag: string) => {
+    const selectedTags = filters.selectedTags || []
+    const newSelectedTags = selectedTags.includes(tag)
+      ? selectedTags.filter(t => t !== tag)
+      : [...selectedTags, tag]
+    setFilters({ ...filters, selectedTags: newSelectedTags })
+  }
 
   if (loading && activeTab === 'statistics') return <LoadingSpinner />
   if (error && activeTab === 'statistics') return <div className="text-center text-red-600 p-8">Error: {error}</div>
@@ -163,7 +201,13 @@ export default function Home() {
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
                 Detailed Song Statistics
               </h3>
-              <SongTable songs={filteredSongs} />
+              <SongTable 
+                songs={filteredSongs} 
+                sortBy={filters.sortBy}
+                sortOrder={filters.sortOrder}
+                onSortChange={handleSortChange}
+                onTagClick={handleTagClick}
+              />
             </section>
           </div>
         )}

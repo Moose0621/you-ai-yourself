@@ -13,7 +13,7 @@ const SAMPLE_SONGS: Song[] = [
     averageLength: 18.5,
     firstPlayed: "1985-09-27",
     lastPlayed: "2025-07-10",
-    gaps: [0, 1, 2, 3, 4, 5],
+    gap: 5,
     tags: ["Type II", "Jam Vehicle"]
   },
   {
@@ -23,7 +23,7 @@ const SAMPLE_SONGS: Song[] = [
     averageLength: 12.3,
     firstPlayed: "1985-10-30",
     lastPlayed: "2025-07-08",
-    gaps: [0, 1, 2, 3],
+    gap: 2,
     tags: ["Fan Favorite", "Uplifting"]
   },
   {
@@ -33,7 +33,7 @@ const SAMPLE_SONGS: Song[] = [
     averageLength: 15.2,
     firstPlayed: "1985-10-15",
     lastPlayed: "2025-07-05",
-    gaps: [0, 1, 2, 3, 4],
+    gap: 3,
     tags: ["Composed", "Complex"]
   },
   {
@@ -43,7 +43,7 @@ const SAMPLE_SONGS: Song[] = [
     averageLength: 16.8,
     firstPlayed: "1990-02-03",
     lastPlayed: "2025-07-12",
-    gaps: [0, 1, 2],
+    gap: 1,
     tags: ["Type II", "Jam Vehicle", "Segue"]
   },
   {
@@ -53,7 +53,7 @@ const SAMPLE_SONGS: Song[] = [
     averageLength: 9.7,
     firstPlayed: "1987-05-15",
     lastPlayed: "2025-07-11",
-    gaps: [0, 1, 2, 3],
+    gap: 2,
     tags: ["High Energy", "Fan Favorite"]
   },
   {
@@ -63,7 +63,7 @@ const SAMPLE_SONGS: Song[] = [
     averageLength: 13.1,
     firstPlayed: "1988-03-12",
     lastPlayed: "2025-07-09",
-    gaps: [0, 1, 2, 3, 4],
+    gap: 4,
     tags: ["Composed", "Emotional"]
   },
   {
@@ -73,7 +73,7 @@ const SAMPLE_SONGS: Song[] = [
     averageLength: 3.2,
     firstPlayed: "1986-04-01",
     lastPlayed: "2025-07-13",
-    gaps: [0, 1],
+    gap: 0,
     tags: ["Crowd Participation", "Short"]
   },
   {
@@ -83,29 +83,47 @@ const SAMPLE_SONGS: Song[] = [
     averageLength: 11.4,
     firstPlayed: "1997-12-06",
     lastPlayed: "2025-07-06",
-    gaps: [0, 1, 2, 3],
+    gap: 1,
     tags: ["Type II", "Jam Vehicle", "Modern Era"]
   }
 ]
 
 const SAMPLE_SHOWS: Show[] = [
   {
-    showdate: "2025-07-13",
+    showid: 1001,
+    date: "2025-07-13",
     venue: "Charleston Coliseum",
-    location: "Charleston, WV",
-    tourName: "Summer 2025"
+    city: "Charleston",
+    state: "WV",
+    country: "USA",
+    setlistnotes: "",
+    songs: ["You Enjoy Myself", "Fluffhead", "Harry Hood"],
+    tourid: 1,
+    tour_name: "Summer 2025"
   },
   {
-    showdate: "2025-07-12",
+    showid: 1002,
+    date: "2025-07-12",
     venue: "Charleston Coliseum", 
-    location: "Charleston, WV",
-    tourName: "Summer 2025"
+    city: "Charleston",
+    state: "WV",
+    country: "USA",
+    setlistnotes: "",
+    songs: ["Tweezer", "Wilson", "Ghost"],
+    tourid: 1,
+    tour_name: "Summer 2025"
   },
   {
-    showdate: "2025-07-11",
+    showid: 1003,
+    date: "2025-07-11",
     venue: "Charleston Coliseum",
-    location: "Charleston, WV", 
-    tourName: "Summer 2025"
+    city: "Charleston",
+    state: "WV",
+    country: "USA",
+    setlistnotes: "",
+    songs: ["Run Like an Antelope", "Divided Sky"],
+    tourid: 1,
+    tour_name: "Summer 2025"
   }
 ]
 
@@ -306,7 +324,7 @@ class PhishApi {
       averageLength: averageLength,
       firstPlayed: apiSong.debut || 'Unknown',
       lastPlayed: apiSong.last_played || 'Unknown',
-      gaps: [parseInt(apiSong.gap) || 0],
+      gap: parseInt(apiSong.gap) || 0,
       tags: this.generateTags(apiSong.song, timesPlayed, averageLength)
     }
   }
@@ -354,11 +372,16 @@ class PhishApi {
 
   private transformShow(apiShow: any): Show {
     return {
-      showdate: apiShow.showdate,
+      showid: parseInt(apiShow.showid) || 0,
+      date: apiShow.showdate || apiShow.date,
       venue: apiShow.venue || 'Unknown Venue',
-      location: `${apiShow.city || ''}, ${apiShow.state || apiShow.country || ''}`.trim().replace(/^,\s*/, ''),
-      setlistdata: apiShow.setlist_notes || '',
-      tourName: apiShow.tour_name || 'Unknown Tour'
+      city: apiShow.city || '',
+      state: apiShow.state || null,
+      country: apiShow.country || 'USA',
+      setlistnotes: apiShow.setlist_notes || '',
+      songs: apiShow.songs || [],
+      tourid: parseInt(apiShow.tourid) || undefined,
+      tour_name: apiShow.tour_name || 'Unknown Tour'
     }
   }
 
@@ -370,7 +393,7 @@ class PhishApi {
       averageLength: parseFloat(apiSong.avg_length) || 0,
       firstPlayed: apiSong.first_played,
       lastPlayed: apiSong.last_played,
-      gaps: apiSong.gaps ? apiSong.gaps.map((g: any) => parseInt(g)) : [],
+      gap: apiSong.gap ? parseInt(apiSong.gap) : undefined,
       tags: apiSong.tags || []
     }
   }
