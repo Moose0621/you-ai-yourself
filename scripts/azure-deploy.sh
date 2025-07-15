@@ -156,9 +156,34 @@ log_info "Copying files for deployment..."
 
 # Always copy essential files first
 cp package*.json "$BUILD_DIR/"
-cp server.js "$BUILD_DIR/" 2>/dev/null || log_warning "No custom server.js found"
-cp web.config "$BUILD_DIR/" 2>/dev/null || log_warning "No web.config found"
-cp startup.sh "$BUILD_DIR/" 2>/dev/null || log_warning "No startup.sh found"
+if [ -f "server.js" ]; then
+    cp server.js "$BUILD_DIR/"
+    log_success "✓ server.js copied"
+else
+    log_error "server.js not found! This is required for Azure deployment."
+    exit 1
+fi
+
+if [ -f "web.config" ]; then
+    cp web.config "$BUILD_DIR/"
+    log_success "✓ web.config copied"
+fi
+
+if [ -f "startup.sh" ]; then
+    cp startup.sh "$BUILD_DIR/"
+    chmod +x "$BUILD_DIR/startup.sh"
+    log_success "✓ startup.sh copied and made executable"
+fi
+
+if [ -f ".deployment" ]; then
+    cp .deployment "$BUILD_DIR/"
+    log_success "✓ .deployment copied"
+fi
+
+if [ -f "deploy.cmd" ]; then
+    cp deploy.cmd "$BUILD_DIR/"
+    log_success "✓ deploy.cmd copied"
+fi
 
 # Copy the entire src directory for proper Next.js structure
 if [ -d "src" ]; then
@@ -208,6 +233,24 @@ chmod +x "$BUILD_DIR/startup.sh" 2>/dev/null || true
 
 log_info "✓ Copied all necessary files"
 
+# Verify critical files are present
+log_step "Verifying deployment package"
+CRITICAL_FILES=("package.json" "server.js")
+for file in "${CRITICAL_FILES[@]}"; do
+    if [ -f "$BUILD_DIR/$file" ]; then
+        log_success "✓ $file verified in package"
+    else
+        log_error "❌ Critical file $file is missing from deployment package!"
+        exit 1
+    fi
+done
+
+# List contents of build directory for debugging
+log_info "Build directory contents:"
+ls -la "$BUILD_DIR/" | while read line; do
+    log_info "  $line"
+done
+
 # Check deployment package size
 PACKAGE_SIZE=$(du -sh "$BUILD_DIR" | cut -f1)
 log_info "Deployment package size: $PACKAGE_SIZE"
@@ -250,7 +293,7 @@ log "⚙️ Setting Node.js version and startup command..."
 az webapp config set \
     --name $WEB_APP_NAME \
     --resource-group $RESOURCE_GROUP \
-    --startup-file "startup.sh" \
+    --startup-file "node server.js" \
     --always-on true
 
 log "📝 Setting environment variables..."
@@ -259,9 +302,11 @@ az webapp config appsettings set \
     --resource-group $RESOURCE_GROUP \
     --settings \
         NODE_ENV=production \
-        WEBSITE_NODE_DEFAULT_VERSION=~18 \
+        WEBSITE_NODE_DEFAULT_VERSION=~20 \
         PORT=8080 \
-        WEBSITES_ENABLE_APP_SERVICE_STORAGE=false
+        WEBSITES_ENABLE_APP_SERVICE_STORAGE=false \
+        SCM_DO_BUILD_DURING_DEPLOYMENT=true \
+        ENABLE_ORYX_BUILD=true
 
 log_success "Azure App Service configured"
 
