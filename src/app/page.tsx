@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Navigation, Tab } from '@/components/Navigation'
 import { TourStats } from '@/components/TourStats'
 import { SongChart } from '@/components/SongChart'
 import { SongTable } from '@/components/SongTable'
 import { FilterControls } from '@/components/FilterControls'
+import { ToursExplorer } from '@/components/ToursExplorer'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { phishApi } from '@/lib/simpleLocalPhishApi'
 import { Song, Show, FilterOptions } from '@/types/phish'
@@ -14,6 +16,7 @@ export default function Home() {
   const [songs, setSongs] = useState<Song[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<Tab>('statistics')
   const [filters, setFilters] = useState<FilterOptions>({
     sortBy: 'timesPlayed',
     sortOrder: 'desc',
@@ -24,6 +27,9 @@ export default function Home() {
 
   useEffect(() => {
     const loadData = async () => {
+      // Only load song/show data for statistics tab
+      if (activeTab !== 'statistics') return
+      
       try {
         setLoading(true)
         setError(null) // Clear any previous errors
@@ -58,7 +64,7 @@ export default function Home() {
     }
 
     loadData()
-  }, [])
+  }, [activeTab])
 
   const filteredSongs = songs.filter(song => {
     if (filters.searchTerm && !song.name.toLowerCase().includes(filters.searchTerm.toLowerCase())) {
@@ -87,8 +93,8 @@ export default function Home() {
     }
   })
 
-  if (loading) return <LoadingSpinner />
-  if (error) return <div className="text-center text-red-600 p-8">Error: {error}</div>
+  if (loading && activeTab === 'statistics') return <LoadingSpinner />
+  if (error && activeTab === 'statistics') return <div className="text-center text-red-600 p-8">Error: {error}</div>
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -103,59 +109,68 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Navigation */}
+      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid gap-8">
-          {/* Tour Statistics Overview */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Current Summer Tour Overview
-            </h2>
-            <TourStats shows={shows} songs={songs} />
-          </section>
+        {activeTab === 'statistics' && (
+          <div className="grid gap-8">
+            {/* Tour Statistics Overview */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                Current Summer Tour Overview
+              </h2>
+              <TourStats shows={shows} songs={songs} />
+            </section>
 
-          {/* Filters */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Song Analytics
-            </h2>
-            <FilterControls filters={filters} onFiltersChange={setFilters} />
-          </section>
+            {/* Filters */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                Song Analytics
+              </h2>
+              <FilterControls filters={filters} onFiltersChange={setFilters} songs={songs} />
+            </section>
 
-          {/* Charts */}
-          <section className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-semibold mb-2">Most Frequently Played Songs</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Top 10 songs by play count from {filteredSongs.length} filtered results
-              </p>
-              <SongChart 
-                songs={[...filteredSongs].sort((a, b) => b.timesPlayed - a.timesPlayed).slice(0, 10)} 
-                type="timesPlayed" 
-              />
-            </div>
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-semibold mb-2">Longest Jam Versions</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Top 10 songs by longest jam length from {filteredSongs.length} filtered results
-              </p>
-              <SongChart 
-                songs={[...filteredSongs]
-                  .filter(song => song.longestJam && song.longestJam.length > 0)
-                  .sort((a, b) => (b.longestJam?.length || 0) - (a.longestJam?.length || 0))
-                  .slice(0, 10)} 
-                type="longestJam" 
-              />
-            </div>
-          </section>
+            {/* Charts */}
+            <section className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-semibold mb-2">Most Frequently Played Songs</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Top 10 songs by play count from {filteredSongs.length} filtered results
+                </p>
+                <SongChart 
+                  songs={[...filteredSongs].sort((a, b) => b.timesPlayed - a.timesPlayed).slice(0, 10)} 
+                  type="timesPlayed" 
+                />
+              </div>
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h3 className="text-xl font-semibold mb-2">Longest Jam Versions</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Top 10 songs by longest jam length from {filteredSongs.length} filtered results
+                </p>
+                <SongChart 
+                  songs={[...filteredSongs]
+                    .filter(song => song.longestJam && song.longestJam.length > 0)
+                    .sort((a, b) => (b.longestJam?.length || 0) - (a.longestJam?.length || 0))
+                    .slice(0, 10)} 
+                  type="longestJam" 
+                />
+              </div>
+            </section>
 
-          {/* Song Table */}
-          <section>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              Detailed Song Statistics
-            </h3>
-            <SongTable songs={filteredSongs} />
-          </section>
-        </div>
+            {/* Song Table */}
+            <section>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Detailed Song Statistics
+              </h3>
+              <SongTable songs={filteredSongs} />
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'tours' && (
+          <ToursExplorer />
+        )}
       </main>
     </div>
   )

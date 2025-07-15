@@ -121,6 +121,63 @@ class SimpleLocalPhishApi {
   }
 
   /**
+   * Get all tours grouped by year
+   */
+  async getToursByYear(): Promise<Record<number, Array<{id: number, name: string, showCount: number, shows: Show[]}>>> {
+    console.log('🎪 Loading tours grouped by year from local cache...')
+    
+    const toursByYear: Record<number, Record<number, {id: number, name: string, shows: Show[]}>> = {}
+    
+    this.shows.forEach(show => {
+      const year = new Date(show.date).getFullYear()
+      const tourId = show.tourid || 0
+      const tourName = show.tour_name || 'Unknown Tour'
+      
+      if (!toursByYear[year]) {
+        toursByYear[year] = {}
+      }
+      
+      if (!toursByYear[year][tourId]) {
+        toursByYear[year][tourId] = {
+          id: tourId,
+          name: tourName,
+          shows: []
+        }
+      }
+      
+      toursByYear[year][tourId].shows.push(show)
+    })
+    
+    // Convert to the desired format
+    const result: Record<number, Array<{id: number, name: string, showCount: number, shows: Show[]}>> = {}
+    
+    Object.keys(toursByYear).forEach(yearStr => {
+      const year = parseInt(yearStr)
+      result[year] = Object.values(toursByYear[year]).map(tour => ({
+        ...tour,
+        showCount: tour.shows.length
+      })).sort((a, b) => a.id - b.id)
+    })
+    
+    console.log(`✅ Found tours across ${Object.keys(result).length} years`)
+    return result
+  }
+
+  /**
+   * Get all unique years with shows
+   */
+  async getAvailableYears(): Promise<number[]> {
+    const years = new Set<number>()
+    
+    this.shows.forEach(show => {
+      const year = new Date(show.date).getFullYear()
+      years.add(year)
+    })
+    
+    return Array.from(years).sort((a, b) => b - a) // Most recent first
+  }
+
+  /**
    * Get metadata about the dataset
    */
   async getMetadata() {
@@ -141,6 +198,8 @@ export const phishApi = {
   getSongStats: () => simpleLocalPhishApi.getSongStats(),
   getSummer2025Shows: () => simpleLocalPhishApi.getSummer2025Shows(),
   getShowsByYear: (year: number) => simpleLocalPhishApi.getShowsByYear(year),
+  getToursByYear: () => simpleLocalPhishApi.getToursByYear(),
+  getAvailableYears: () => simpleLocalPhishApi.getAvailableYears(),
   searchSongs: (query: string) => simpleLocalPhishApi.searchSongs(query),
   getTopSongsByPlayCount: (limit?: number) => simpleLocalPhishApi.getTopSongsByPlayCount(limit),
   getTopSongsByLength: (limit?: number) => simpleLocalPhishApi.getTopSongsByLength(limit),

@@ -28,6 +28,9 @@ export interface Show {
   country: string
   setlistnotes: string
   songs: string[] // Array of song names or empty
+  // Tour information
+  tourid?: number
+  tour_name?: string
   // Legacy fields for backward compatibility
   showdate?: string
   location?: string
