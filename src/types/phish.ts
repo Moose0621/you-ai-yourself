@@ -3,19 +3,35 @@ export interface Song {
   slug: string
   timesPlayed: number
   averageLength: number
-  firstPlayed?: string
-  lastPlayed?: string
-  gaps?: number[]
-  debuts?: string[]
-  tags?: string[]
+  firstPlayed?: string | null
+  lastPlayed?: string | null
+  gap?: number
+  tags: string[]
+  longestJam?: JamPerformance
+}
+
+export interface JamPerformance {
+  length: number // in minutes
+  date: string
+  venue: string
+  city: string
+  state?: string | null
+  showid?: number
 }
 
 export interface Show {
-  showdate: string
+  showid: number
+  date: string
   venue: string
-  location: string
-  setlistdata?: any
-  songs?: Song[]
+  city: string
+  state: string | null
+  country: string
+  setlistnotes: string
+  songs: string[] // Array of song names or empty
+  // Legacy fields for backward compatibility
+  showdate?: string
+  location?: string
+  setlistdata?: unknown
   tourName?: string
 }
 
@@ -34,9 +50,11 @@ export interface ApiResponse<T> {
 }
 
 export interface PhishNetApiResponse {
-  success: boolean
+  error: boolean
+  error_message: string
   total_entries?: number
   total_pages?: number
   page?: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[]
 }

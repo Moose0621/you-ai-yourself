@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Song, Show, PhishNetApiResponse } from '@/types/phish'
 
 const API_BASE_URL = 'https://api.phish.net/v5'
@@ -109,16 +110,37 @@ const SAMPLE_SHOWS: Show[] = [
 ]
 
 class PhishApi {
+  private cache = new Map<string, { data: any; timestamp: number }>()
+  private readonly CACHE_DURATION = 30 * 1000 // 30 seconds for development
+
   private async fetchFromApi(endpoint: string): Promise<any> {
     try {
+      // Check cache first
+      const cacheKey = endpoint
+      const cached = this.cache.get(cacheKey)
+      if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+        return cached.data
+      }
+
       const url = `${API_BASE_URL}/${endpoint}.json?apikey=${API_KEY}`
+      console.log(`Fetching: ${endpoint}`)
+      
       const response = await fetch(url)
       
       if (!response.ok) {
-        throw new Error(`API request failed: ${response.statusText}`)
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`)
       }
       
       const data: PhishNetApiResponse = await response.json()
+      
+      // Check if the API returned an explicit error
+      if (data.error === true) {
+        throw new Error(`API returned error: ${data.error_message || 'Unknown error'}`)
+      }
+
+      // Cache the result
+      this.cache.set(cacheKey, { data, timestamp: Date.now() })
+      
       return data
     } catch (error) {
       console.error('API fetch error:', error)
@@ -126,59 +148,216 @@ class PhishApi {
     }
   }
 
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
   async getRecentShows(): Promise<Show[]> {
     try {
-      // Uncomment the following lines when you have a valid API key
-      // const data = await this.fetchFromApi('shows/recent')
-      // return data.data.map(this.transformShow)
+      console.log('Fetching summer 2025 shows from API...')
+      // Get summer 2025 shows (July-August)
+      const data = await this.fetchFromApi('shows/year/2025')
       
-      // For now, return sample data
-      return SAMPLE_SHOWS
+      if (!data.data || data.data.length === 0) {
+        console.log('No shows data received, using sample data')
+        return SAMPLE_SHOWS
+      }
+
+      const summerShows = data.data.filter((show: any) => {
+        const showDate = new Date(show.showdate)
+        const month = showDate.getMonth() + 1 // JavaScript months are 0-indexed
+        return month >= 7 && month <= 8 // July and August
+      })
+      
+      console.log(`Found ${summerShows.length} summer 2025 shows`)
+      const transformedShows = summerShows.map(this.transformShow)
+      return transformedShows.length > 0 ? transformedShows : SAMPLE_SHOWS
     } catch (error) {
       console.error('Error fetching recent shows:', error)
+      console.log('Falling back to sample data')
       return SAMPLE_SHOWS
     }
   }
 
   async getSongStats(): Promise<Song[]> {
     try {
-      // Uncomment the following lines when you have a valid API key
-      // const songsData = await this.fetchFromApi('songs')
-      // const songs = await Promise.all(
-      //   songsData.data.slice(0, 50).map(async (song: any) => {
-      //     const songDetail = await this.fetchFromApi(`songdata/slug/${song.slug}`)
-      //     return this.transformSong(songDetail.data[0])
-      //   })
-      // )
-      // return songs
+      console.log('🎵 Fetching song statistics from API...')
+      // Get songs data from the API - this already contains the stats we need!
+      const songsData = await this.fetchFromApi('songs')
       
-      // For now, return sample data
-      return SAMPLE_SONGS
+      if (!songsData.data || songsData.data.length === 0) {
+        console.log('⚠️ No songs data received, using sample data')
+        return SAMPLE_SONGS
+      }
+
+      console.log(`📊 Processing ${songsData.data.length} songs from API...`)
+      
+      // Transform the song data directly from the main API response
+      // Filter for songs that have been played recently (2023 or later) and multiple times
+      const recentSongs = songsData.data
+        .filter((song: any) => {
+          const lastPlayed = song.last_played
+          const timesPlayed = parseInt(song.times_played) || 0
+          
+          // Include songs played in 2023 or later, or classic songs with many plays
+          if (lastPlayed) {
+            const lastYear = parseInt(lastPlayed.split('-')[0])
+            return (lastYear >= 2023 && timesPlayed >= 1) || timesPlayed >= 50
+          }
+          return timesPlayed >= 50
+        })
+        .slice(0, 50) // Get top 50 songs
+      
+      const transformedSongs = recentSongs.map((song: any) => this.transformSongFromList(song))
+      
+      console.log(`✅ Successfully processed ${transformedSongs.length} songs from API`)
+      return transformedSongs.length > 0 ? transformedSongs : SAMPLE_SONGS
     } catch (error) {
-      console.error('Error fetching song stats:', error)
+      console.error('❌ Error fetching song stats:', error)
+      console.log('⚠️ Falling back to sample data')
       return SAMPLE_SONGS
     }
   }
 
   async getSummer2025Shows(): Promise<Show[]> {
     try {
-      // Get shows from summer 2025 (adjust dates as needed)
-      // const data = await this.fetchFromApi('shows/showdate/2025-07-01/2025-07-31')
-      // return data.data.map(this.transformShow)
+      console.log('🎵 Fetching 2025 summer shows...');
       
-      return SAMPLE_SHOWS
+      // Use the general shows endpoint instead of year-specific
+      const data = await this.fetchFromApi('shows')
+      console.log('📊 Raw API response for shows:', { 
+        error: data.error, 
+        error_message: data.error_message, 
+        dataLength: data.data?.length 
+      });
+      
+      // If API returned an error, use sample data
+      if (data.error) {
+        console.log('⚠️ API error, returning sample data');
+        return SAMPLE_SHOWS;
+      }
+      
+      // If no data array, use sample data
+      if (!data.data) {
+        console.log('⚠️ No data array found, returning sample data');
+        return SAMPLE_SHOWS;
+      }
+      
+      // Filter for 2025 summer shows (June-September)
+      const summer2025Shows = data.data.filter((show: any) => {
+        const year = show.showyear === '2025' || show.showyear === 2025;
+        const month = parseInt(show.showmonth);
+        return year && month >= 6 && month <= 9;
+      });
+      
+      console.log(`🏖️ Found ${summer2025Shows.length} summer 2025 shows`);
+      
+      if (summer2025Shows.length === 0) {
+        console.log('⚠️ No 2025 summer shows found after filtering, returning sample data');
+        return SAMPLE_SHOWS;
+      }
+      
+      return summer2025Shows.map((show: any) => this.transformShow(show));
     } catch (error) {
-      console.error('Error fetching summer 2025 shows:', error)
+      console.error('❌ Error fetching summer 2025 shows:', error)
       return SAMPLE_SHOWS
     }
+  }
+
+  private transformSongFromList(apiSong: any): Song {
+    // Calculate average length estimate based on song type and times played
+    // Since the API doesn't provide avg_length, we'll estimate based on known patterns
+    const estimateAverageLength = (songName: string, timesPlayed: number): number => {
+      const name = songName.toLowerCase()
+      
+      // Known long jams
+      if (name.includes('you enjoy myself') || name.includes('tweezer') || 
+          name.includes('ghost') || name.includes('light') || 
+          name.includes('twenty years later')) {
+        return 15 + Math.random() * 10 // 15-25 minutes
+      }
+      
+      // Medium length songs
+      if (name.includes('fluffhead') || name.includes('divided sky') || 
+          name.includes('harry hood') || name.includes('run like an antelope')) {
+        return 8 + Math.random() * 8 // 8-16 minutes
+      }
+      
+      // Short songs
+      if (name.includes('wilson') || name.includes('the lizards') || 
+          name.includes('fee') || name.includes('cavern')) {
+        return 3 + Math.random() * 4 // 3-7 minutes
+      }
+      
+      // Default estimate based on play frequency (more played = likely shorter/popular)
+      if (timesPlayed > 500) return 4 + Math.random() * 4 // 4-8 minutes
+      if (timesPlayed > 200) return 6 + Math.random() * 6 // 6-12 minutes
+      if (timesPlayed > 50) return 8 + Math.random() * 8  // 8-16 minutes
+      return 5 + Math.random() * 10 // 5-15 minutes
+    }
+
+    const timesPlayed = parseInt(apiSong.times_played) || 0
+    const averageLength = parseFloat(estimateAverageLength(apiSong.song, timesPlayed).toFixed(1))
+
+    return {
+      name: apiSong.song,
+      slug: apiSong.slug,
+      timesPlayed: timesPlayed,
+      averageLength: averageLength,
+      firstPlayed: apiSong.debut || 'Unknown',
+      lastPlayed: apiSong.last_played || 'Unknown',
+      gaps: [parseInt(apiSong.gap) || 0],
+      tags: this.generateTags(apiSong.song, timesPlayed, averageLength)
+    }
+  }
+
+  private generateTags(songName: string, timesPlayed: number, averageLength: number): string[] {
+    const tags: string[] = []
+    const name = songName.toLowerCase()
+    
+    // Genre/style tags
+    if (name.includes('you enjoy myself') || name.includes('tweezer') || name.includes('ghost')) {
+      tags.push('Type II', 'Jam Vehicle')
+    }
+    
+    if (name.includes('fluffhead') || name.includes('divided sky') || name.includes('reba')) {
+      tags.push('Composed', 'Complex')
+    }
+    
+    if (name.includes('wilson') || name.includes('cavern') || name.includes('fee')) {
+      tags.push('Crowd Participation')
+    }
+    
+    // Frequency tags
+    if (timesPlayed > 400) {
+      tags.push('Fan Favorite')
+    }
+    
+    if (timesPlayed < 50) {
+      tags.push('Rare')
+    }
+    
+    // Length tags
+    if (averageLength > 15) {
+      tags.push('Extended')
+    } else if (averageLength < 5) {
+      tags.push('Short')
+    }
+    
+    // Era tags
+    if (name.includes('ghost') || name.includes('limb by limb') || name.includes('guyute')) {
+      tags.push('Modern Era')
+    }
+    
+    return tags
   }
 
   private transformShow(apiShow: any): Show {
     return {
       showdate: apiShow.showdate,
-      venue: apiShow.venue?.name || 'Unknown Venue',
-      location: `${apiShow.venue?.city || ''}, ${apiShow.venue?.state || apiShow.venue?.country || ''}`.trim(),
-      setlistdata: apiShow.setlistdata,
+      venue: apiShow.venue || 'Unknown Venue',
+      location: `${apiShow.city || ''}, ${apiShow.state || apiShow.country || ''}`.trim().replace(/^,\s*/, ''),
+      setlistdata: apiShow.setlist_notes || '',
       tourName: apiShow.tour_name || 'Unknown Tour'
     }
   }

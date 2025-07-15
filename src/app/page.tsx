@@ -6,7 +6,7 @@ import { SongChart } from '@/components/SongChart'
 import { SongTable } from '@/components/SongTable'
 import { FilterControls } from '@/components/FilterControls'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
-import { phishApi } from '@/lib/phishApi'
+import { phishApi } from '@/lib/simpleLocalPhishApi'
 import { Song, Show, FilterOptions } from '@/types/phish'
 
 export default function Home() {
@@ -26,14 +26,31 @@ export default function Home() {
     const loadData = async () => {
       try {
         setLoading(true)
-        // For now, we'll load recent shows data
-        // You can later add your API key as an environment variable
-        const showsData = await phishApi.getRecentShows()
+        setError(null) // Clear any previous errors
+        console.log('🎵 Loading Phish data...')
+        
+        // Load summer 2025 shows and song statistics
+        const showsData = await phishApi.getSummer2025Shows()
         const songsData = await phishApi.getSongStats()
+        
+        console.log('📊 Loaded data:', { 
+          shows: showsData.length, 
+          songs: songsData.length 
+        })
+        
+        // Log sample song data for debugging
+        if (songsData.length > 0) {
+          console.log('🎵 Sample songs loaded:', songsData.slice(0, 3).map((s: Song) => ({
+            name: s.name,
+            timesPlayed: s.timesPlayed,
+            averageLength: s.averageLength
+          })))
+        }
         
         setShows(showsData)
         setSongs(songsData)
       } catch (err) {
+        console.error('❌ Error loading data:', err)
         setError(err instanceof Error ? err.message : 'Failed to load data')
       } finally {
         setLoading(false)
@@ -47,7 +64,9 @@ export default function Home() {
     if (filters.searchTerm && !song.name.toLowerCase().includes(filters.searchTerm.toLowerCase())) {
       return false
     }
-    if (song.averageLength < filters.minLength || song.averageLength > filters.maxLength) {
+    // For length filtering, use the longest jam length if available, otherwise average length
+    const songLength = song.longestJam?.length || song.averageLength
+    if (songLength < filters.minLength || songLength > filters.maxLength) {
       return false
     }
     return true
@@ -57,7 +76,10 @@ export default function Home() {
       case 'timesPlayed':
         return (a.timesPlayed - b.timesPlayed) * multiplier
       case 'averageLength':
-        return (a.averageLength - b.averageLength) * multiplier
+        // Sort by longest jam length if available, otherwise average length
+        const aLength = a.longestJam?.length || a.averageLength
+        const bLength = b.longestJam?.length || b.averageLength
+        return (aLength - bLength) * multiplier
       case 'name':
         return a.name.localeCompare(b.name) * multiplier
       default:
@@ -102,12 +124,27 @@ export default function Home() {
           {/* Charts */}
           <section className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">Songs by Play Count</h3>
-              <SongChart songs={filteredSongs.slice(0, 20)} type="timesPlayed" />
+              <h3 className="text-xl font-semibold mb-2">Most Frequently Played Songs</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Top 10 songs by play count from {filteredSongs.length} filtered results
+              </p>
+              <SongChart 
+                songs={[...filteredSongs].sort((a, b) => b.timesPlayed - a.timesPlayed).slice(0, 10)} 
+                type="timesPlayed" 
+              />
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">Songs by Average Length</h3>
-              <SongChart songs={filteredSongs.slice(0, 20)} type="averageLength" />
+              <h3 className="text-xl font-semibold mb-2">Longest Jam Versions</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Top 10 songs by longest jam length from {filteredSongs.length} filtered results
+              </p>
+              <SongChart 
+                songs={[...filteredSongs]
+                  .filter(song => song.longestJam && song.longestJam.length > 0)
+                  .sort((a, b) => (b.longestJam?.length || 0) - (a.longestJam?.length || 0))
+                  .slice(0, 10)} 
+                type="longestJam" 
+              />
             </div>
           </section>
 

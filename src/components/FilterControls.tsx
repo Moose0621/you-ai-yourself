@@ -50,7 +50,7 @@ export function FilterControls({ filters, onFiltersChange }: FilterControlsProps
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="timesPlayed">Times Played</option>
-            <option value="averageLength">Average Length</option>
+            <option value="averageLength">Song Length (avg/longest)</option>
             <option value="name">Song Name</option>
           </select>
         </div>
@@ -73,7 +73,7 @@ export function FilterControls({ filters, onFiltersChange }: FilterControlsProps
         {/* Length Filter */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Length Range (min)
+            Length Range (min) - filters by longest jam or avg
           </label>
           <div className="flex space-x-2">
             <input

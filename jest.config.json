@@ -1,0 +1,39 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "collectCoverage": true,
+  "coverageDirectory": "coverage",
+  "coverageReporters": ["text", "lcov", "html"],
+  "collectCoverageFrom": [
+    "src/lib/simpleLocalPhishApi.ts",
+    "scripts/**/*.py",
+    "!src/**/*.d.ts",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/components/**",
+    "!src/app/**"
+  ],
+  "coverageThreshold": {
+    "global": {
+      "branches": 70,
+      "functions": 80,
+      "lines": 80,
+      "statements": 80
+    }
+  },
+  "testMatch": [
+    "**/tests/**/*.test.{ts,tsx,js}",
+    "**/tests/**/*.spec.{ts,tsx,js}"
+  ],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1"
+  },
+  "setupFilesAfterEnv": ["<rootDir>/tests/setup.ts"],
+  "transform": {
+    "^.+\\.(ts|tsx)$": ["ts-jest", {
+      "jsx": "react"
+    }]
+  },
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json"],
+  "testTimeout": 10000
+}

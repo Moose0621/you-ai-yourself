@@ -21,6 +21,9 @@ export function SongTable({ songs }: SongTableProps) {
                 Avg Length
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Longest Jam
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 First Played
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -42,6 +45,18 @@ export function SongTable({ songs }: SongTableProps) {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{song.averageLength.toFixed(1)}m</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {song.longestJam ? (
+                    <div className="text-sm text-gray-900">
+                      <div className="font-medium">{song.longestJam.length.toFixed(1)}m</div>
+                      <div className="text-xs text-gray-500" title={`${song.longestJam.venue}, ${song.longestJam.city}, ${song.longestJam.state}`}>
+                        {song.longestJam.date}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-400">N/A</div>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{song.firstPlayed || 'N/A'}</div>
