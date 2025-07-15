@@ -8,8 +8,10 @@ import { FilterControls } from '@/components/FilterControls'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { phishApi } from '@/lib/phishApi'
 import { Song, Show, FilterOptions } from '@/types/phish'
+import { useTelemetry } from '@/hooks/useTelemetry'
 
 export default function Home() {
+  const { trackUserAction, trackErrorWithContext, trackPerformanceMetric } = useTelemetry()
   const [shows, setShows] = useState<Show[]>([])
   const [songs, setSongs] = useState<Song[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,8 +26,17 @@ export default function Home() {
 
   useEffect(() => {
     const loadData = async () => {
+      const startTime = performance.now()
       try {
         setLoading(true)
+        // Track page load start
+        trackUserAction({
+          action: 'view_tour',
+          properties: {
+            tourYear: new Date().getFullYear()
+          }
+        })
+        
         // For now, we'll load recent shows data
         // You can later add your API key as an environment variable
         const showsData = await phishApi.getRecentShows()
@@ -33,8 +44,22 @@ export default function Home() {
         
         setShows(showsData)
         setSongs(songsData)
+        
+        // Track successful data load
+        const loadTime = performance.now() - startTime
+        trackPerformanceMetric('pageLoadTime', loadTime, {
+          showsCount: showsData.length,
+          songsCount: songsData.length
+        })
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data')
+        const error = err instanceof Error ? err : new Error('Failed to load data')
+        setError(error.message)
+        
+        // Track error
+        trackErrorWithContext(error, {
+          action: 'data_load',
+          dataSize: 0
+        })
       } finally {
         setLoading(false)
       }
@@ -42,6 +67,51 @@ export default function Home() {
 
     loadData()
   }, [])
+
+  // Custom filter handler with telemetry
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    const startTime = performance.now()
+    
+    // Track filter changes
+    if (newFilters.searchTerm !== filters.searchTerm) {
+      trackUserAction({
+        action: 'search',
+        properties: {
+          query: newFilters.searchTerm,
+          resultCount: songs.filter(song => 
+            newFilters.searchTerm ? song.name.toLowerCase().includes(newFilters.searchTerm.toLowerCase()) : true
+          ).length
+        }
+      })
+    }
+    
+    if (newFilters.sortBy !== filters.sortBy || newFilters.sortOrder !== filters.sortOrder) {
+      trackUserAction({
+        action: 'sort_change',
+        properties: {
+          sortBy: newFilters.sortBy,
+          sortOrder: newFilters.sortOrder
+        }
+      })
+    }
+    
+    if (newFilters.minLength !== filters.minLength || newFilters.maxLength !== filters.maxLength) {
+      trackUserAction({
+        action: 'filter',
+        properties: {
+          filterType: 'length_range',
+          minLength: newFilters.minLength,
+          maxLength: newFilters.maxLength
+        }
+      })
+    }
+    
+    setFilters(newFilters)
+    
+    // Track filter operation performance
+    const filterTime = performance.now() - startTime
+    trackPerformanceMetric('filterOperationTime', filterTime)
+  }
 
   const filteredSongs = songs.filter(song => {
     if (filters.searchTerm && !song.name.toLowerCase().includes(filters.searchTerm.toLowerCase())) {
@@ -96,7 +166,7 @@ export default function Home() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               Song Analytics
             </h2>
-            <FilterControls filters={filters} onFiltersChange={setFilters} />
+            <FilterControls filters={filters} onFiltersChange={handleFiltersChange} />
           </section>
 
           {/* Charts */}

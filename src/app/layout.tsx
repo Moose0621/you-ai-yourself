@@ -1,4 +1,5 @@
 import './globals.css'
+import { AppInsightsProvider } from '@/components/AppInsightsProvider'
 
 export const metadata = {
   title: 'Phish Stats - Song Statistics & Analytics',
@@ -12,7 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <AppInsightsProvider />
+        {children}
+      </body>
     </html>
   )
 }

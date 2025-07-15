@@ -9,6 +9,7 @@ A modern web application for exploring Phish song statistics, tour data, and per
 - **Interactive Filtering**: Sort and filter songs by various criteria
 - **Modern UI**: Built with Next.js, TypeScript, and Tailwind CSS
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Application Monitoring**: Integrated Azure Application Insights for comprehensive monitoring and analytics
 
 ## Getting Started
 
@@ -36,9 +37,10 @@ npm install
 cp .env.local.example .env.local
 ```
 
-4. Edit `.env.local` and add your Phish.net API key:
+4. Edit `.env.local` and add your API keys:
 ```
 NEXT_PUBLIC_PHISH_API_KEY=your_actual_api_key_here
+NEXT_PUBLIC_APPINSIGHTS_CONNECTION_STRING=your_azure_application_insights_connection_string
 ```
 
 5. Run the development server:
@@ -84,6 +86,49 @@ This application integrates with the Phish.net API v5. The API provides access t
 - `GET /v5/songdata/slug/{song-slug}.json` - Detailed song data
 - `GET /v5/shows/year/{year}.json` - Shows by year
 
+## Application Monitoring
+
+The application integrates with Azure Application Insights for comprehensive monitoring, error tracking, and performance analytics.
+
+### Features
+
+- **Real-time Performance Monitoring**: Track page load times, API response times, and user interactions
+- **Error Tracking and Reporting**: Automatic capture of JavaScript errors and exceptions
+- **User Behavior Analytics**: Monitor search queries, filter usage, and navigation patterns
+- **API Performance Monitoring**: Track Phish.net API calls and response times
+- **Custom Business Metrics**: Monitor song view counts, popular searches, and user engagement
+
+### Setup
+
+1. **Create Azure Application Insights Resource**:
+   - Go to Azure Portal > Create a resource > Application Insights
+   - Note the connection string from the Properties section
+
+2. **Configure Environment Variable**:
+   ```bash
+   NEXT_PUBLIC_APPINSIGHTS_CONNECTION_STRING=InstrumentationKey=your-key;IngestionEndpoint=https://your-region.in.applicationinsights.azure.com/;LiveEndpoint=https://your-region.livediagnostics.monitor.azure.com/
+   ```
+
+3. **Monitored Events**:
+   - **Page Views**: Automatic tracking of route changes
+   - **Search Operations**: Track search queries and result counts
+   - **Filter Changes**: Monitor filter usage and performance
+   - **API Calls**: Track Phish.net API performance and failures
+   - **Errors**: Automatic exception tracking with context
+
+### Usage
+
+The monitoring is automatically initialized when the application starts. Key telemetry includes:
+
+- **Performance Metrics**: `performance.pageLoadTime`, `performance.filterOperationTime`, `performance.apiResponseTime`
+- **User Actions**: `search`, `filter`, `sort_change`, `view_tour`
+- **API Dependencies**: Track all Phish.net API calls with response times and success rates
+- **Business Metrics**: Track popular songs, search terms, and user engagement patterns
+
+### Development
+
+When running locally without a connection string, monitoring is gracefully disabled with a console warning. All telemetry functions are safe to call and will not affect application performance.
+
 ## Development
 
 ### Current Implementation
@@ -111,6 +156,7 @@ Some ideas for additional features:
 - **TypeScript**: Type-safe JavaScript
 - **Tailwind CSS**: Utility-first CSS framework
 - **React 18**: UI library with hooks and modern features
+- **Azure Application Insights**: Application monitoring and analytics
 
 ## Contributing
 

@@ -1,4 +1,5 @@
 import { Song, Show, PhishNetApiResponse } from '@/types/phish'
+import { trackDependency, trackError } from '@/lib/appInsights'
 
 const API_BASE_URL = 'https://api.phish.net/v5'
 const API_KEY = process.env.NEXT_PUBLIC_PHISH_API_KEY || 'YOUR_API_KEY_HERE'
@@ -110,17 +111,69 @@ const SAMPLE_SHOWS: Show[] = [
 
 class PhishApi {
   private async fetchFromApi(endpoint: string): Promise<any> {
+    const startTime = performance.now()
+    const url = `${API_BASE_URL}/${endpoint}.json?apikey=${API_KEY}`
+    
     try {
-      const url = `${API_BASE_URL}/${endpoint}.json?apikey=${API_KEY}`
       const response = await fetch(url)
+      const duration = performance.now() - startTime
       
       if (!response.ok) {
+        // Track failed API call
+        trackDependency(
+          endpoint,
+          `GET ${url}`,
+          duration,
+          false,
+          {
+            statusCode: response.status.toString(),
+            statusText: response.statusText,
+            endpoint
+          }
+        )
         throw new Error(`API request failed: ${response.statusText}`)
       }
       
       const data: PhishNetApiResponse = await response.json()
+      
+      // Track successful API call
+      trackDependency(
+        endpoint,
+        `GET ${url}`,
+        duration,
+        true,
+        {
+          statusCode: response.status.toString(),
+          dataSize: JSON.stringify(data).length,
+          endpoint,
+          resultCount: data.data?.length || 0
+        }
+      )
+      
       return data
     } catch (error) {
+      const duration = performance.now() - startTime
+      
+      // Track error in API call
+      trackDependency(
+        endpoint,
+        `GET ${url}`,
+        duration,
+        false,
+        {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          endpoint
+        }
+      )
+      
+      if (error instanceof Error) {
+        trackError(error, {
+          context: 'phish_api_fetch',
+          endpoint,
+          url
+        })
+      }
+      
       console.error('API fetch error:', error)
       throw error
     }
