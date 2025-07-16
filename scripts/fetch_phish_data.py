@@ -14,7 +14,9 @@ from datetime import datetime
 import random
 
 # Configuration
-API_KEY = os.getenv('NEXT_PUBLIC_PHISH_API_KEY', 'YOUR_API_KEY_HERE')
+API_KEY = os.getenv('NEXT_PUBLIC_PHISH_API_KEY')
+if not API_KEY:
+    raise ValueError("NEXT_PUBLIC_PHISH_API_KEY environment variable is required. Please set it in your .env.local file.")
 BASE_URL = 'https://api.phish.net/v5'
 DATA_DIR = Path(__file__).parent.parent / 'data'
 
