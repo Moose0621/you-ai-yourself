@@ -19,8 +19,8 @@ export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }
       return <ChevronUpIcon className="w-4 h-4 text-gray-400 opacity-50" />
     }
     return sortOrder === 'asc' ? 
-      <ChevronUpIcon className="w-4 h-4 text-blue-600" /> : 
-      <ChevronDownIcon className="w-4 h-4 text-blue-600" />
+      <ChevronUpIcon className="w-4 h-4 text-phish-purple-600" /> : 
+      <ChevronDownIcon className="w-4 h-4 text-phish-purple-600" />
   }
 
   const HeaderCell = ({ 
@@ -33,7 +33,7 @@ export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }
     className?: string 
   }) => (
     <th 
-      className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors ${className}`}
+      className={`px-6 py-3 text-left text-xs font-medium text-phish-purple-700 uppercase tracking-wider cursor-pointer hover:bg-phish-purple-50 transition-colors ${className}`}
       onClick={() => handleHeaderClick(column)}
     >
       <div className="flex items-center space-x-1">
@@ -44,10 +44,10 @@ export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }
   )
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-phish-purple-200 overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-phish-purple-200">
+          <thead className="bg-gradient-to-r from-phish-purple-50 to-phish-blue-50">
             <tr>
               <HeaderCell column="name">
                 Song Name
@@ -67,14 +67,14 @@ export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }
               <HeaderCell column="lastPlayed">
                 Last Played
               </HeaderCell>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-phish-purple-700 uppercase tracking-wider">
                 Tags
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-100">
             {songs.slice(0, 50).map((song, index) => (
-              <tr key={song.slug} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors`}>
+              <tr key={song.slug} className={`${index % 2 === 0 ? 'bg-white' : 'bg-phish-purple-25'} hover:bg-phish-purple-50 transition-colors`}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{song.name}</div>
                 </td>
@@ -108,7 +108,7 @@ export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }
                       <button
                         key={tagIndex}
                         onClick={() => onTagClick?.(tag)}
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors cursor-pointer"
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-phish-blue-100 text-phish-blue-800 hover:bg-phish-blue-200 transition-colors cursor-pointer"
                         title={`Filter by ${tag}`}
                       >
                         {tag}
@@ -127,8 +127,8 @@ export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }
         </table>
       </div>
       {songs.length > 50 && (
-        <div className="bg-gray-50 px-6 py-3 text-center">
-          <p className="text-sm text-gray-500">
+        <div className="bg-gradient-to-r from-phish-purple-50 to-phish-blue-50 px-6 py-3 text-center border-t border-phish-purple-200">
+          <p className="text-sm text-phish-purple-700 font-medium">
             Showing first 50 of {songs.length} songs
           </p>
         </div>

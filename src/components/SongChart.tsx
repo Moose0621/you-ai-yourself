@@ -56,22 +56,38 @@ export function SongChart({ songs, type }: SongChartProps) {
         
         const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0
         
+        // Different colors for different chart types
+        let barColor: string
+        switch (type) {
+          case 'timesPlayed':
+            barColor = 'bg-gradient-to-r from-phish-blue-500 to-phish-blue-600'
+            break
+          case 'averageLength':
+            barColor = 'bg-gradient-to-r from-phish-green-500 to-phish-green-600'
+            break
+          case 'longestJam':
+            barColor = 'bg-gradient-to-r from-phish-purple-500 to-phish-purple-600'
+            break
+          default:
+            barColor = 'bg-gradient-to-r from-gray-400 to-gray-500'
+        }
+        
         return (
-          <div key={`${song.slug}-${index}`} className="flex items-center space-x-3">
-            <div className="w-32 text-sm text-gray-600 truncate" title={song.name}>
+          <div key={`${song.slug}-${index}`} className="flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
+            <div className="w-32 text-sm text-gray-700 truncate font-medium" title={song.name}>
               {song.name}
             </div>
-            <div className="flex-1 bg-gray-200 rounded-full h-4">
+            <div className="flex-1 bg-gray-200 rounded-full h-5 shadow-inner">
               <div
-                className="bg-blue-600 h-4 rounded-full transition-all duration-300"
+                className={`${barColor} h-5 rounded-full transition-all duration-500 shadow-sm`}
                 style={{ width: `${percentage}%` }}
               ></div>
             </div>
-            <div className="w-16 text-sm text-gray-900 text-right">
+            <div className="w-16 text-sm text-gray-900 text-right font-semibold">
               {displayValue}
             </div>
             {type === 'longestJam' && song.longestJam && (
-              <div className="w-20 text-xs text-gray-500 truncate" title={`${song.longestJam.date} at ${song.longestJam.venue}`}>
+              <div className="w-20 text-xs text-phish-purple-600 truncate font-medium" title={`${song.longestJam.date} at ${song.longestJam.venue}`}>
                 {song.longestJam.date}
               </div>
             )}

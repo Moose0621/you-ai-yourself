@@ -14,7 +14,7 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
   ]
 
   return (
-    <nav className="bg-white shadow-lg mb-8">
+    <nav className="bg-white/90 backdrop-blur-sm shadow-xl border-t-4 border-phish-purple-500">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex space-x-8">
           {tabs.map((tab) => (
@@ -22,14 +22,14 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={`
-                flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm transition-colors
+                flex items-center space-x-2 py-4 px-4 border-b-3 font-semibold text-base transition-all duration-200 transform hover:scale-105
                 ${activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-phish-purple-500 text-phish-purple-700 bg-phish-purple-50/50'
+                  : 'border-transparent text-gray-600 hover:text-phish-blue-600 hover:border-phish-blue-300 hover:bg-phish-blue-50/30'
                 }
               `}
             >
-              <span className="text-lg">{tab.icon}</span>
+              <span className="text-xl">{tab.icon}</span>
               <span>{tab.label}</span>
             </button>
           ))}

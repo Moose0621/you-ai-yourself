@@ -152,14 +152,14 @@ export default function Home() {
   if (error && activeTab === 'statistics') return <ErrorDisplay error={error} onRetry={handleRetry} />
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <header className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-4xl font-bold text-gray-900">
-            Phish Statistics Dashboard
+    <div className="min-h-screen bg-gradient-to-br from-phish-blue-50 via-phish-purple-50 to-phish-indigo-50">
+      <header className="bg-gradient-to-r from-phish-purple-600 to-phish-blue-600 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <h1 className="text-5xl font-bold text-white drop-shadow-lg">
+            🎵 Phish Statistics Dashboard
           </h1>
-          <p className="text-lg text-gray-600 mt-2">
-            Explore song statistics, tour data, and performance analytics
+          <p className="text-xl text-phish-purple-100 mt-3 font-medium">
+            Explore the magic ✨ • Song stats, tour data & jam analytics
           </p>
         </div>
       </header>
@@ -167,30 +167,30 @@ export default function Home() {
       {/* Navigation */}
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8 mt-8">
         {activeTab === 'statistics' && (
           <div className="grid gap-8">
             {/* Tour Statistics Overview */}
             <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                Current Summer Tour Overview
+              <h2 className="text-3xl font-bold text-phish-purple-800 mb-6 flex items-center">
+                🎪 Current Summer Tour Overview
               </h2>
               <TourStats shows={shows} songs={songs} />
             </section>
 
             {/* Filters */}
             <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                Song Analytics
+              <h2 className="text-3xl font-bold text-phish-purple-800 mb-6 flex items-center">
+                🎵 Song Analytics
               </h2>
               <FilterControls filters={filters} onFiltersChange={setFilters} songs={songs} />
             </section>
 
             {/* Charts */}
             <section className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <h3 className="text-xl font-semibold mb-2">Most Frequently Played Songs</h3>
-                <p className="text-sm text-gray-600 mb-4">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-phish-purple-200 p-8">
+                <h3 className="text-2xl font-bold mb-2 text-phish-blue-700">🔥 Most Frequently Played Songs</h3>
+                <p className="text-sm text-gray-600 mb-6">
                   Top 10 songs by play count from {filteredSongs.length} filtered results
                 </p>
                 <SongChart 
@@ -198,9 +198,9 @@ export default function Home() {
                   type="timesPlayed" 
                 />
               </div>
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <h3 className="text-xl font-semibold mb-2">Longest Jam Versions</h3>
-                <p className="text-sm text-gray-600 mb-4">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-phish-green-200 p-8">
+                <h3 className="text-2xl font-bold mb-2 text-phish-green-700">🎸 Longest Jam Versions</h3>
+                <p className="text-sm text-gray-600 mb-6">
                   Top 10 songs by longest jam length from {filteredSongs.length} filtered results
                 </p>
                 <SongChart 
@@ -215,8 +215,8 @@ export default function Home() {
 
             {/* Song Table */}
             <section>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Detailed Song Statistics
+              <h3 className="text-2xl font-bold text-phish-purple-800 mb-6 flex items-center">
+                📊 Detailed Song Statistics
               </h3>
               <SongTable 
                 songs={filteredSongs} 

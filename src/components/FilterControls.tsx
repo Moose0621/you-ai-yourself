@@ -117,12 +117,12 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="grid md:grid-cols-4 gap-4 mb-6">
+    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-phish-purple-200 p-8">
+      <div className="grid md:grid-cols-4 gap-6 mb-8">
         {/* Search */}
         <div className="relative">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Search Songs
+          <label className="block text-sm font-bold text-phish-purple-700 mb-3">
+            🔍 Search Songs
           </label>
           <input
             ref={searchInputRef}
@@ -132,29 +132,29 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder="Song name..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+            className="w-full px-4 py-3 border-2 border-phish-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-phish-purple-400 focus:border-phish-purple-400 text-gray-900 transition-all"
           />
           
           {/* Autocomplete Suggestions */}
           {showSuggestions && filteredSuggestions.length > 0 && (
             <div
               ref={suggestionsRef}
-              className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto"
+              className="absolute z-10 w-full mt-2 bg-white border-2 border-phish-purple-200 rounded-xl shadow-xl max-h-60 overflow-y-auto"
             >
               {filteredSuggestions.map((song, index) => (
                 <div
                   key={`${song.name}-${index}`}
                   onClick={() => handleSuggestionClick(song.name)}
-                  className="px-3 py-2 cursor-pointer hover:bg-blue-50 border-b border-gray-100 last:border-b-0"
+                  className="px-4 py-3 cursor-pointer hover:bg-phish-purple-50 border-b border-phish-purple-100 last:border-b-0"
                 >
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-900 font-medium">{song.name}</span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-gray-900 font-semibold">{song.name}</span>
+                    <span className="text-xs text-phish-blue-600 font-medium">
                       {song.timesPlayed} plays
                     </span>
                   </div>
                   {song.longestJam && (
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-phish-purple-500 mt-1 font-medium">
                       Longest: {Math.floor(song.longestJam.length)}:{(song.longestJam.length % 1 * 60).toFixed(0).padStart(2, '0')} 
                       {song.longestJam.date && ` (${song.longestJam.date})`}
                     </div>
@@ -167,13 +167,13 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
 
         {/* Sort By */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Sort By
+          <label className="block text-sm font-bold text-phish-purple-700 mb-3">
+            📊 Sort By
           </label>
           <select
             value={filters.sortBy}
             onChange={(e) => handleSortChange(e.target.value as FilterOptions['sortBy'])}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+            className="w-full px-4 py-3 border-2 border-phish-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-phish-purple-400 focus:border-phish-purple-400 text-gray-900 transition-all"
           >
             <option value="timesPlayed">Times Played</option>
             <option value="averageLength">Song Length (avg/longest)</option>
@@ -185,13 +185,13 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
 
         {/* Sort Order */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Order
+          <label className="block text-sm font-bold text-phish-purple-700 mb-3">
+            📈 Order
           </label>
           <select
             value={filters.sortOrder}
             onChange={(e) => handleOrderChange(e.target.value as FilterOptions['sortOrder'])}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+            className="w-full px-4 py-3 border-2 border-phish-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-phish-purple-400 focus:border-phish-purple-400 text-gray-900 transition-all"
           >
             <option value="desc">Descending</option>
             <option value="asc">Ascending</option>
@@ -200,8 +200,8 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
 
         {/* Length Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Length Range (min) - filters by longest jam or avg
+          <label className="block text-sm font-bold text-phish-purple-700 mb-3">
+            ⏱️ Length Range (min) - filters by longest jam or avg
           </label>
           <div className="flex space-x-2">
             <input
@@ -210,7 +210,7 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
               onChange={(e) => handleLengthChange(Number(e.target.value), filters.maxLength)}
               placeholder="Min"
               min="0"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              className="w-full px-4 py-3 border-2 border-phish-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-phish-purple-400 focus:border-phish-purple-400 text-gray-900 transition-all"
             />
             <input
               type="number"
@@ -218,38 +218,38 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
               onChange={(e) => handleLengthChange(filters.minLength, Number(e.target.value))}
               placeholder="Max"
               min="0"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              className="w-full px-4 py-3 border-2 border-phish-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-phish-purple-400 focus:border-phish-purple-400 text-gray-900 transition-all"
             />
           </div>
         </div>
       </div>
 
       {/* Tag Filtering */}
-      <div className="border-t pt-4">
-        <div className="flex items-center justify-between mb-3">
-          <label className="block text-sm font-medium text-gray-700">
-            Filter by Tags ({(filters.selectedTags || []).length} selected)
+      <div className="border-t-2 border-phish-purple-200 pt-6">
+        <div className="flex items-center justify-between mb-4">
+          <label className="block text-sm font-bold text-phish-purple-700">
+            🏷️ Filter by Tags ({(filters.selectedTags || []).length} selected)
           </label>
           {((filters.selectedTags && filters.selectedTags.length > 0) || filters.searchTerm || filters.minLength > 0 || filters.maxLength < 60) && (
             <button
               onClick={clearAllFilters}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              className="text-sm text-phish-blue-600 hover:text-phish-blue-800 font-bold px-3 py-1 rounded-lg hover:bg-phish-blue-50 transition-all"
             >
               Clear All Filters
             </button>
           )}
         </div>
-        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+        <div className="flex flex-wrap gap-3 max-h-40 overflow-y-auto">
           {allTags.map((tag) => {
             const isSelected = (filters.selectedTags || []).includes(tag)
             return (
               <button
                 key={tag}
                 onClick={() => handleTagToggle(tag)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 transform hover:scale-105 ${
                   isSelected
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-gradient-to-r from-phish-blue-500 to-phish-blue-600 text-white shadow-lg'
+                    : 'bg-phish-purple-100 text-phish-purple-700 hover:bg-phish-purple-200 border border-phish-purple-200'
                 }`}
               >
                 {tag}
@@ -258,7 +258,7 @@ export function FilterControls({ filters, onFiltersChange, songs }: FilterContro
           })}
         </div>
         {allTags.length === 0 && (
-          <p className="text-sm text-gray-500 italic">No tags available in current data</p>
+          <p className="text-sm text-phish-purple-500 italic font-medium">No tags available in current data</p>
         )}
       </div>
     </div>

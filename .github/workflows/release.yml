@@ -1,0 +1,101 @@
+name: Build and Release Container
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release'
+        required: true
+        default: 'v0.1.0'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=tag
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value={{tag}},enable=${{ github.event_name == 'workflow_dispatch' }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Create Release
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        body: |
+          ## Phish Stats v${{ github.ref_name }}
+          
+          ### 🎵 Features
+          - Comprehensive Phish song statistics and analytics
+          - Interactive tours explorer with circular visualization
+          - Advanced filtering and sorting capabilities
+          - Safari and cross-browser compatibility
+          - Real-time search with autocomplete
+          - Sortable columns and tag filtering
+          
+          ### 🚀 Deployment
+          This release includes a containerized version that can be deployed to:
+          - Azure App Service
+          - Docker/Kubernetes environments
+          - Any container platform
+          
+          ### 📦 Container Images
+          - `ghcr.io/${{ github.repository }}:${{ github.ref_name }}`
+          - `ghcr.io/${{ github.repository }}:latest`
+          
+          ### 🔧 Running the Container
+          ```bash
+          docker run -p 8080:8080 ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          ```
+          
+          ### 📊 Data Source
+          - Uses phish.net API data
+          - Includes historical performance data
+          - Filters to Phish shows only (excludes solo projects)
+          
+          Built with Next.js 15, TypeScript, and Tailwind CSS.
+        draft: false
+        prerelease: false
