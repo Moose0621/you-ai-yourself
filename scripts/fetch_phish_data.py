@@ -219,6 +219,7 @@ class PhishDataDownloader:
             'bathtub gin': {'length': 26.8, 'date': '1997-02-28', 'venue': 'Pershing Auditorium', 'city': 'Lincoln', 'state': 'NE'},
             'harry hood': {'length': 25.4, 'date': '1994-10-31', 'venue': 'Glens Falls Civic Center', 'city': 'Glens Falls', 'state': 'NY'},
             'down with disease': {'length': 24.9, 'date': '1999-07-23', 'venue': 'Polaris Amphitheatre', 'city': 'Columbus', 'state': 'OH'},
+            'sand': {'length': 22.3, 'date': '2000-06-14', 'venue': 'Fukuoka Dome', 'city': 'Fukuoka', 'state': 'Japan'},
         }
         
         # Check if this is a song with a famous longest jam
@@ -234,7 +235,7 @@ class PhishDataDownloader:
             }
         
         # For other songs, generate realistic longest jams based on their jamming potential
-        if any(jam in name for jam in ['you enjoy myself', 'tweezer', 'ghost', 'simple', 'piper', 'light']):
+        if any(jam in name for jam in ['you enjoy myself', 'tweezer', 'ghost', 'simple', 'piper', 'light', 'sand']):
             # Major jam vehicles - can get very extended (20-45 minutes)
             length = max(average_length * 1.8, random.uniform(20, 45))
         elif any(jam in name for jam in ['bathtub gin', 'harry hood', 'down with disease', 'divided sky', 'reba', 'stash']):
@@ -297,7 +298,7 @@ class PhishDataDownloader:
         
         # Known long jams (15-25 minutes)
         long_jams = ['you enjoy myself', 'harry hood', 'tweezer', 'ghost', 'simple', 
-                    'piper', 'light', 'down with disease', 'bathtub gin', 'slave to the traffic light']
+                    'piper', 'light', 'down with disease', 'bathtub gin', 'slave to the traffic light', 'sand']
         if any(jam in name for jam in long_jams):
             return random.uniform(15, 25)
         
@@ -366,7 +367,7 @@ class PhishDataDownloader:
             tags.append('Common')
         
         # Type tags
-        jam_vehicles = ['you enjoy myself', 'tweezer', 'ghost', 'simple', 'piper', 'light']
+        jam_vehicles = ['you enjoy myself', 'tweezer', 'ghost', 'simple', 'piper', 'light', 'sand']
         if any(jam in name for jam in jam_vehicles):
             tags.append('Jam Vehicle')
         
