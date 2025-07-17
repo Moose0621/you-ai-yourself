@@ -9,6 +9,7 @@ export const songValidators = {
   /**
    * Validates a Song object has all required properties with correct types
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   isValidSong: (song: any): song is Song => {
     return (
       typeof song === 'object' &&
@@ -36,8 +37,8 @@ export const songValidators = {
       checks.push(typeof song.lastPlayed === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(song.lastPlayed))
     }
     
-    if (song.gaps !== undefined) {
-      checks.push(Array.isArray(song.gaps) && song.gaps.every(gap => typeof gap === 'number' && gap >= 0))
+    if (song.gap !== undefined) {
+      checks.push(typeof song.gap === 'number' && song.gap >= 0)
     }
     
     if (song.tags !== undefined) {
@@ -52,14 +53,16 @@ export const showValidators = {
   /**
    * Validates a Show object has all required properties with correct types
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   isValidShow: (show: any): show is Show => {
     return (
       typeof show === 'object' &&
       show !== null &&
-      typeof show.showdate === 'string' &&
+      typeof show.date === 'string' &&
       typeof show.venue === 'string' &&
-      typeof show.location === 'string' &&
-      /^\d{4}-\d{2}-\d{2}$/.test(show.showdate)
+      typeof show.city === 'string' &&
+      typeof show.showid === 'number' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(show.date)
     )
   }
 }
@@ -129,20 +132,24 @@ export const mockDataGenerators = {
   createSong: (overrides: Partial<Song> = {}): Song => ({
     name: 'Test Song',
     slug: 'test-song',
-    timesPlayed: 100,
-    averageLength: 10.5,
-    firstPlayed: '1990-01-01',
+    timesPlayed: 10,
+    averageLength: 8.5,
+    firstPlayed: '2023-01-01',
     lastPlayed: '2023-12-31',
-    gaps: [0, 1, 2],
-    tags: ['Test Tag'],
+    gap: 5,
+    tags: ['test', 'sample'],
     ...overrides
   }),
-  
+
   createShow: (overrides: Partial<Show> = {}): Show => ({
-    showdate: '2023-12-31',
+    showid: 1,
+    date: '2023-12-31',
     venue: 'Test Venue',
-    location: 'Test City, TS',
-    tourName: 'Test Tour',
+    city: 'Test City',
+    state: 'TS',
+    country: 'USA',
+    setlistnotes: 'Test notes',
+    songs: ['Test Song'],
     ...overrides
   })
 }

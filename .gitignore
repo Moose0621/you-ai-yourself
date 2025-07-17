@@ -50,3 +50,10 @@ pids
 
 # Optional eslint cache
 .eslintcache
+
+# Backup files
+backups/
+*.zip
+*.tar.gz
+*.tar
+deploy.zip
