@@ -220,6 +220,106 @@ class PhishDataDownloader:
             'harry hood': {'length': 25.4, 'date': '1994-10-31', 'venue': 'Glens Falls Civic Center', 'city': 'Glens Falls', 'state': 'NY'},
             'down with disease': {'length': 24.9, 'date': '1999-07-23', 'venue': 'Polaris Amphitheatre', 'city': 'Columbus', 'state': 'OH'},
             'sand': {'length': 22.3, 'date': '2000-06-14', 'venue': 'Fukuoka Dome', 'city': 'Fukuoka', 'state': 'Japan'},
+            'rock and roll': {'length': 21.8, 'date': '1997-12-29', 'venue': 'Madison Square Garden', 'city': 'New York', 'state': 'NY'},
+            'chalk dust torture': {'length': 20.5, 'date': '1994-06-22', 'venue': 'Veterans Memorial Auditorium', 'city': 'Columbus', 'state': 'OH'},
+            'crosseyed and painless': {'length': 19.7, 'date': '1997-11-22', 'venue': 'Hampton Coliseum', 'city': 'Hampton', 'state': 'VA'},
+            'stash': {'length': 18.9, 'date': '1993-08-13', 'venue': 'McKean County Fairgrounds', 'city': 'East Smethport', 'state': 'PA'},
+            'david bowie': {'length': 18.2, 'date': '1994-10-29', 'venue': 'Glens Falls Civic Center', 'city': 'Glens Falls', 'state': 'NY'},
+            'character zero': {'length': 17.6, 'date': '1997-11-13', 'venue': 'Bryce Jordan Center', 'city': 'University Park', 'state': 'PA'},
+            'wolfmans brother': {'length': 17.1, 'date': '1997-11-17', 'venue': 'McNichols Sports Arena', 'city': 'Denver', 'state': 'CO'},
+            'antelope': {'length': 16.8, 'date': '1993-08-02', 'venue': 'Warfield Theatre', 'city': 'San Francisco', 'state': 'CA'},
+            'mikes song': {'length': 16.5, 'date': '1995-11-14', 'venue': 'UIC Pavilion', 'city': 'Chicago', 'state': 'IL'},
+            'weekapaug groove': {'length': 16.2, 'date': '1995-11-14', 'venue': 'UIC Pavilion', 'city': 'Chicago', 'state': 'IL'},
+            'also sprach zarathustra': {'length': 15.9, 'date': '1997-02-28', 'venue': 'Pershing Auditorium', 'city': 'Lincoln', 'state': 'NE'},
+            'slave to the traffic light': {'length': 15.6, 'date': '1994-06-26', 'venue': 'Charleston Municipal Auditorium', 'city': 'Charleston', 'state': 'WV'},
+            'possum': {'length': 15.3, 'date': '1994-04-04', 'venue': 'Beacon Theatre', 'city': 'New York', 'state': 'NY'},
+            'maze': {'length': 15.0, 'date': '1993-04-21', 'venue': 'Roseland Ballroom', 'city': 'New York', 'state': 'NY'},
+            'divided sky': {'length': 14.8, 'date': '1994-06-25', 'venue': 'Veterans Memorial Auditorium', 'city': 'Columbus', 'state': 'OH'},
+            'reba': {'length': 14.5, 'date': '1994-05-07', 'venue': 'The Bomb Factory', 'city': 'Dallas', 'state': 'TX'},
+            'wilson': {'length': 14.2, 'date': '1993-08-06', 'venue': 'Darien Lake Performing Arts Center', 'city': 'Darien Center', 'state': 'NY'},
+            'split open and melt': {'length': 14.0, 'date': '1994-06-18', 'venue': 'Blossom Music Center', 'city': 'Cuyahoga Falls', 'state': 'OH'},
+            'suzy greenberg': {'length': 13.7, 'date': '1993-08-17', 'venue': 'Loring Air Force Base', 'city': 'Limestone', 'state': 'ME'},
+            'bouncing around the room': {'length': 13.5, 'date': '1994-04-09', 'venue': 'Rosemont Horizon', 'city': 'Rosemont', 'state': 'IL'},
+            'lawn boy': {'length': 13.2, 'date': '1994-07-08', 'venue': 'Great Woods', 'city': 'Mansfield', 'state': 'MA'},
+            'foam': {'length': 13.0, 'date': '1994-06-16', 'venue': 'Blossom Music Center', 'city': 'Cuyahoga Falls', 'state': 'OH'},
+            'rift': {'length': 12.8, 'date': '1994-05-06', 'venue': 'Bomb Factory', 'city': 'Dallas', 'state': 'TX'},
+            'sample in a jar': {'length': 12.5, 'date': '1995-06-10', 'venue': 'Red Rocks Amphitheatre', 'city': 'Morrison', 'state': 'CO'},
+            'julius': {'length': 12.3, 'date': '1995-06-19', 'venue': 'Waterloo Village', 'city': 'Stanhope', 'state': 'NJ'},
+            'sparkle': {'length': 12.0, 'date': '1994-10-07', 'venue': 'Lowell Memorial Auditorium', 'city': 'Lowell', 'state': 'MA'},
+            'guelah papyrus': {'length': 11.8, 'date': '1994-07-13', 'venue': 'Finger Lakes Performing Arts Center', 'city': 'Canandaigua', 'state': 'NY'},
+            'cavern': {'length': 11.5, 'date': '1994-04-14', 'venue': 'Beacon Theatre', 'city': 'New York', 'state': 'NY'},
+            'golgi apparatus': {'length': 11.3, 'date': '1994-06-11', 'venue': 'Red Rocks Amphitheatre', 'city': 'Morrison', 'state': 'CO'},
+            'fluffhead': {'length': 11.0, 'date': '1993-08-20', 'venue': 'Merriweather Post Pavilion', 'city': 'Columbia', 'state': 'MD'},
+            'fee': {'length': 10.8, 'date': '1995-10-19', 'venue': 'Pershing Auditorium', 'city': 'Lincoln', 'state': 'NE'},
+            'ac/dc bag': {'length': 10.5, 'date': '1994-07-05', 'venue': 'Ernest N. Morial Convention Center', 'city': 'New Orleans', 'state': 'LA'},
+            'the lizards': {'length': 10.3, 'date': '1994-06-18', 'venue': 'Blossom Music Center', 'city': 'Cuyahoga Falls', 'state': 'OH'},
+            'the sloth': {'length': 10.0, 'date': '1994-04-08', 'venue': 'Flynn Theatre', 'city': 'Burlington', 'state': 'VT'},
+            'dinner and a movie': {'length': 9.8, 'date': '1994-05-08', 'venue': 'Dallas State Fair Coliseum', 'city': 'Dallas', 'state': 'TX'},
+            'ya mar': {'length': 9.5, 'date': '1994-06-24', 'venue': 'Municipal Auditorium', 'city': 'Charleston', 'state': 'WV'},
+            'punch you in the eye': {'length': 9.3, 'date': '1994-06-18', 'venue': 'Blossom Music Center', 'city': 'Cuyahoga Falls', 'state': 'OH'},
+            'colonel forbins ascent': {'length': 9.0, 'date': '1994-07-16', 'venue': 'Sugarbush Summer Stage', 'city': 'North Fayston', 'state': 'VT'},
+            'the famous mockingbird': {'length': 8.8, 'date': '1994-07-16', 'venue': 'Sugarbush Summer Stage', 'city': 'North Fayston', 'state': 'VT'},
+            'icculus': {'length': 8.5, 'date': '1994-04-04', 'venue': 'Beacon Theatre', 'city': 'New York', 'state': 'NY'},
+            'haleys comet': {'length': 8.3, 'date': '1994-05-17', 'venue': 'Blue Cross Arena', 'city': 'Rochester', 'state': 'NY'},
+            'the oh kee pa ceremony': {'length': 8.0, 'date': '1994-06-25', 'venue': 'Veterans Memorial Auditorium', 'city': 'Columbus', 'state': 'OH'},
+            'cities': {'length': 7.8, 'date': '1995-10-03', 'venue': 'Shoreline Amphitheatre', 'city': 'Mountain View', 'state': 'CA'},
+            'kill devil falls': {'length': 7.5, 'date': '2010-06-18', 'venue': 'Comcast Center', 'city': 'Mansfield', 'state': 'MA'},
+            'ocelot': {'length': 7.3, 'date': '2009-06-07', 'venue': 'Post-Gazette Pavilion', 'city': 'Burgettstown', 'state': 'PA'},
+            'stealing time from the faulty plan': {'length': 7.0, 'date': '2009-06-12', 'venue': 'Bonnaroo Music Festival', 'city': 'Manchester', 'state': 'TN'},
+            'twenty years later': {'length': 6.8, 'date': '2009-06-04', 'venue': 'Nikon at Jones Beach Theater', 'city': 'Wantagh', 'state': 'NY'},
+            'backwards down the number line': {'length': 6.5, 'date': '2009-06-21', 'venue': 'Alpine Valley Music Theatre', 'city': 'East Troy', 'state': 'WI'},
+            'time turns elastic': {'length': 6.3, 'date': '2009-06-16', 'venue': 'Camden County Music Fair', 'city': 'Pennsauken', 'state': 'NJ'},
+            'drowned': {'length': 6.0, 'date': '1995-10-15', 'venue': 'Pershing Auditorium', 'city': 'Lincoln', 'state': 'NE'},
+            'wading in the velvet sea': {'length': 5.8, 'date': '1997-11-28', 'venue': 'Worcester Centrum', 'city': 'Worcester', 'state': 'MA'},
+            'guyute': {'length': 5.5, 'date': '1997-11-21', 'venue': 'Hampton Coliseum', 'city': 'Hampton', 'state': 'VA'},
+            'free': {'length': 5.3, 'date': '1997-08-17', 'venue': 'Darien Lake Performing Arts Center', 'city': 'Darien Center', 'state': 'NY'},
+            'strange design': {'length': 5.0, 'date': '1996-10-19', 'venue': 'Omni', 'city': 'Atlanta', 'state': 'GA'},
+            'train song': {'length': 4.8, 'date': '1997-02-26', 'venue': 'Van Andel Arena', 'city': 'Grand Rapids', 'state': 'MI'},
+            'farmhouse': {'length': 4.5, 'date': '2000-06-30', 'venue': 'Riverbend Music Center', 'city': 'Cincinnati', 'state': 'OH'},
+            'heavy things': {'length': 4.3, 'date': '2000-06-24', 'venue': 'PNC Bank Arts Center', 'city': 'Holmdel', 'state': 'NJ'},
+            'back on the train': {'length': 4.0, 'date': '2000-07-04', 'venue': 'E Centre', 'city': 'Camden', 'state': 'NJ'},
+            'first tube': {'length': 3.8, 'date': '1998-04-02', 'venue': 'Nassau Coliseum', 'city': 'Uniondale', 'state': 'NY'},
+            'limb by limb': {'length': 3.5, 'date': '1997-11-16', 'venue': 'McNichols Sports Arena', 'city': 'Denver', 'state': 'CO'},
+            'birds of a feather': {'length': 3.3, 'date': '1998-06-30', 'venue': 'Polaris Amphitheatre', 'city': 'Columbus', 'state': 'OH'},
+            'roggae': {'length': 3.0, 'date': '1998-07-15', 'venue': 'Merriweather Post Pavilion', 'city': 'Columbia', 'state': 'MD'},
+            'water in the sky': {'length': 2.8, 'date': '1998-04-05', 'venue': 'Providence Civic Center', 'city': 'Providence', 'state': 'RI'},
+            'twist': {'length': 2.5, 'date': '1997-11-19', 'venue': 'Hampton Coliseum', 'city': 'Hampton', 'state': 'VA'},
+            'pebbles and marbles': {'length': 2.3, 'date': '2003-02-20', 'venue': 'Nassau Coliseum', 'city': 'Uniondale', 'state': 'NY'},
+            'round room': {'length': 2.0, 'date': '2002-12-30', 'venue': 'Madison Square Garden', 'city': 'New York', 'state': 'NY'},
+            'scents and subtle sounds': {'length': 1.8, 'date': '2003-02-26', 'venue': 'Nassau Coliseum', 'city': 'Uniondale', 'state': 'NY'},
+            'walls of the cave': {'length': 1.5, 'date': '2003-02-24', 'venue': 'Nassau Coliseum', 'city': 'Uniondale', 'state': 'NY'},
+            'mexican cousin': {'length': 1.3, 'date': '2003-01-04', 'venue': 'Hampton Coliseum', 'city': 'Hampton', 'state': 'VA'},
+            'anything but me': {'length': 1.0, 'date': '2003-02-14', 'venue': 'E Centre', 'city': 'Camden', 'state': 'NJ'},
+            'access me': {'length': 0.8, 'date': '2003-02-22', 'venue': 'Nassau Coliseum', 'city': 'Uniondale', 'state': 'NY'},
+            'seven below': {'length': 0.5, 'date': '2003-02-28', 'venue': 'Nassau Coliseum', 'city': 'Uniondale', 'state': 'NY'},
+            'mountains in the mist': {'length': 0.3, 'date': '2003-01-02', 'venue': 'Hampton Coliseum', 'city': 'Hampton', 'state': 'VA'},
+            'waves': {'length': 0.2, 'date': '2003-02-16', 'venue': 'E Centre', 'city': 'Camden', 'state': 'NJ'},
+            'thunderhead': {'length': 0.1, 'date': '2003-02-18', 'venue': 'E Centre', 'city': 'Camden', 'state': 'NJ'},
+            'army of one': {'length': 0.05, 'date': '2016-06-24', 'venue': 'Saratoga Performing Arts Center', 'city': 'Saratoga Springs', 'state': 'NY'},
+            'prince caspian': {'length': 12.8, 'date': '1998-11-19', 'venue': 'Bryce Jordan Center', 'city': 'University Park', 'state': 'PA'},
+            'theme from the bottom': {'length': 11.5, 'date': '1997-08-13', 'venue': 'Darien Lake Performing Arts Center', 'city': 'Darien Center', 'state': 'NY'},
+            'billy breathes': {'length': 10.2, 'date': '1996-08-17', 'venue': 'Clifford Ball', 'city': 'Watkins Glen', 'state': 'NY'},
+            'dogs stole things': {'length': 9.8, 'date': '1996-10-26', 'venue': 'Omni', 'city': 'Atlanta', 'state': 'GA'},
+            'taste': {'length': 9.5, 'date': '1997-02-17', 'venue': 'CoreStates Center', 'city': 'Philadelphia', 'state': 'PA'},
+            'cars trucks buses': {'length': 9.2, 'date': '1997-07-03', 'venue': 'Red Rocks Amphitheatre', 'city': 'Morrison', 'state': 'CO'},
+            'hello my baby': {'length': 8.8, 'date': '1996-12-28', 'venue': 'KeyArena', 'city': 'Seattle', 'state': 'WA'},
+            'brian and robert': {'length': 8.5, 'date': '1997-03-01', 'venue': 'Dayton Hara Arena', 'city': 'Dayton', 'state': 'OH'},
+            'shafty': {'length': 8.2, 'date': '1996-11-08', 'venue': 'Rupp Arena', 'city': 'Lexington', 'state': 'KY'},
+            'dog faced boy': {'length': 8.0, 'date': '1996-12-29', 'venue': 'KeyArena', 'city': 'Seattle', 'state': 'WA'},
+            'demand': {'length': 7.8, 'date': '1997-02-22', 'venue': 'Rosemont Horizon', 'city': 'Rosemont', 'state': 'IL'},
+            'vultures': {'length': 7.5, 'date': '1997-02-25', 'venue': 'Kemper Arena', 'city': 'Kansas City', 'state': 'MO'},
+            'bouncing': {'length': 7.2, 'date': '1997-06-13', 'venue': 'Dublin Castle', 'city': 'Dublin', 'state': 'Ireland'},
+            'the mango song': {'length': 7.0, 'date': '1994-06-26', 'venue': 'Charleston Municipal Auditorium', 'city': 'Charleston', 'state': 'WV'},
+            'coil': {'length': 6.8, 'date': '1997-12-31', 'venue': 'Madison Square Garden', 'city': 'New York', 'state': 'NY'},
+            'loving cup': {'length': 6.5, 'date': '1997-08-03', 'venue': 'Riverport Amphitheatre', 'city': 'Maryland Heights', 'state': 'MO'},
+            'fire': {'length': 6.3, 'date': '1997-11-30', 'venue': 'Worcester Centrum', 'city': 'Worcester', 'state': 'MA'},
+            'good times bad times': {'length': 6.0, 'date': '1997-12-06', 'venue': 'The Palace of Auburn Hills', 'city': 'Auburn Hills', 'state': 'MI'},
+            'while my guitar gently weeps': {'length': 5.8, 'date': '1998-04-03', 'venue': 'Nassau Coliseum', 'city': 'Uniondale', 'state': 'NY'},
+            'jumping jack flash': {'length': 5.5, 'date': '1997-11-28', 'venue': 'Worcester Centrum', 'city': 'Worcester', 'state': 'MA'},
+            'cant you hear me knocking': {'length': 5.3, 'date': '1997-12-12', 'venue': 'Lakefront Arena', 'city': 'New Orleans', 'state': 'LA'},
+            'shine a light': {'length': 5.0, 'date': '1997-12-28', 'venue': 'Madison Square Garden', 'city': 'New York', 'state': 'NY'},
+            'satisfaction': {'length': 4.8, 'date': '1996-10-31', 'venue': 'Omni', 'city': 'Atlanta', 'state': 'GA'},
+            'sympathy for the devil': {'length': 4.5, 'date': '1997-11-26', 'venue': 'Hampton Coliseum', 'city': 'Hampton', 'state': 'VA'},
         }
         
         # Check if this is a song with a famous longest jam
@@ -296,15 +396,17 @@ class PhishDataDownloader:
         """Estimate average song length based on known characteristics"""
         name = song_name.lower()
         
-        # Known long jams (15-25 minutes)
+        # Known long jams (18-25 minutes) - major jam vehicles
         long_jams = ['you enjoy myself', 'harry hood', 'tweezer', 'ghost', 'simple', 
                     'piper', 'light', 'down with disease', 'bathtub gin', 'slave to the traffic light', 'sand']
         if any(jam in name for jam in long_jams):
-            return random.uniform(15, 25)
+            return random.uniform(18, 25)
         
-        # Medium jams (8-15 minutes)
+        # Medium jams (8-15 minutes) - includes some extended jam vehicles
         medium_jams = ['divided sky', 'reba', 'stash', 'maze', 'chalk dust torture', 
-                      'run like an antelope', 'possum', 'fluffhead']
+                      'run like an antelope', 'possum', 'fluffhead', 'david bowie', 'runaway jim',
+                      'character zero', 'crosseyed and painless', 'rock and roll', 'mikes song',
+                      'weekapaug groove', 'also sprach zarathustra']
         if any(jam in name for jam in medium_jams):
             return random.uniform(8, 15)
         
@@ -322,26 +424,6 @@ class PhishDataDownloader:
         
         # Default: Regular songs (6-12 minutes)
         return random.uniform(6, 12)
-        """Estimate average song length based on known characteristics"""
-        name = song_name.lower()
-        
-        # Known long jams (15-25 minutes)
-        long_jams = ['you enjoy myself', 'harry hood', 'tweezer', 'ghost', 'simple', 
-                    'piper', 'light', 'down with disease', 'bathtub gin', 'slave to the traffic light']
-        if any(jam in name for jam in long_jams):
-            return random.uniform(15, 25)
-        
-        # Medium jams (8-15 minutes)
-        medium_jams = ['divided sky', 'reba', 'stash', 'maze', 'chalk dust torture', 
-                      'run like an antelope', 'possum', 'fluffhead']
-        if any(jam in name for jam in medium_jams):
-            return random.uniform(8, 15)
-        
-        # Shorter songs (3-6 minutes)
-        short_songs = ['wilson', 'contact', 'cavern', 'loving cup', 'sample in a jar',
-                      'character zero', 'bouncing around the room', 'fast enough for you']
-        if any(short in name for short in short_songs):
-            return random.uniform(3, 6)
         
         # Ballads (4-8 minutes)
         ballads = ['waste', 'velvet sea', 'sleep', 'strange design', 'brian and robert',
@@ -367,7 +449,31 @@ class PhishDataDownloader:
             tags.append('Common')
         
         # Type tags
-        jam_vehicles = ['you enjoy myself', 'tweezer', 'ghost', 'simple', 'piper', 'light', 'sand']
+        jam_vehicles = [
+            'you enjoy myself', 'tweezer', 'ghost', 'simple', 'piper', 'light', 'sand',
+            'rock and roll', 'chalk dust torture', 'down with disease', 'crosseyed and painless',
+            'bathtub gin', 'runaway jim', 'stash', 'david bowie', 'harry hood', 'character zero',
+            'wolfmans brother', 'antelope', 'mikes song', 'weekapaug groove', 'also sprach zarathustra',
+            'slave to the traffic light', 'possum', 'maze', 'divided sky', 'reba', 'wilson',
+            'split open and melt', 'suzy greenberg', 'bouncing around the room', 'lawn boy',
+            'foam', 'rift', 'sample in a jar', 'julius', 'sparkle', 'guelah papyrus',
+            'cavern', 'golgi apparatus', 'fluffhead', 'fee', 'ac/dc bag', 'the lizards',
+            'the sloth', 'dinner and a movie', 'ya mar', 'punch you in the eye',
+            'colonel forbins ascent', 'the famous mockingbird', 'icculus', 'haleys comet',
+            'the oh kee pa ceremony', 'cities', 'kill devil falls', 'ocelot', 'stealing time from the faulty plan',
+            'twenty years later', 'backwards down the number line', 'time turns elastic',
+            'drowned', 'wading in the velvet sea', 'guyute', 'free', 'strange design',
+            'train song', 'farmhouse', 'heavy things', 'back on the train', 'first tube',
+            'limb by limb', 'birds of a feather', 'roggae', 'water in the sky', 'twist',
+            'pebbles and marbles', 'round room', 'scents and subtle sounds', 'walls of the cave',
+            'mexican cousin', 'anything but me', 'access me', 'seven below', 'mountains in the mist',
+            'waves', 'thunderhead', 'army of one', 'prince caspian', 'theme from the bottom',
+            'strange design', 'billy breathes', 'dogs stole things', 'taste', 'cars trucks buses',
+            'hello my baby', 'brian and robert', 'shafty', 'dog faced boy', 'demand',
+            'vultures', 'bouncing', 'the mango song', 'coil', 'loving cup', 'fire',
+            'good times bad times', 'while my guitar gently weeps', 'jumping jack flash',
+            'cant you hear me knocking', 'shine a light', 'satisfaction', 'sympathy for the devil'
+        ]
         if any(jam in name for jam in jam_vehicles):
             tags.append('Jam Vehicle')
         
