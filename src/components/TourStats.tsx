@@ -39,14 +39,14 @@ export function TourStats({ shows, songs }: TourStatsProps) {
   ]
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       {stats.map((stat, index) => (
-        <div key={index} className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-6 transform hover:scale-105 transition-all duration-200">
-          <div className={`w-16 h-16 ${stat.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
-            <span className="text-2xl">{stat.icon}</span>
+        <div key={index} className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 transform hover:scale-105 transition-all duration-200">
+          <div className={`w-12 h-12 sm:w-16 sm:h-16 ${stat.color} rounded-2xl flex items-center justify-center mb-3 sm:mb-4 shadow-lg`}>
+            <span className="text-lg sm:text-2xl">{stat.icon}</span>
           </div>
-          <h3 className="text-3xl font-bold text-gray-800 mb-1">{stat.value}</h3>
-          <p className="text-gray-600 font-medium">{stat.label}</p>
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-1">{stat.value}</h3>
+          <p className="text-sm sm:text-base text-gray-600 font-medium">{stat.label}</p>
         </div>
       ))}
     </div>

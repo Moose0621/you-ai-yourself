@@ -154,11 +154,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-phish-blue-50 via-phish-purple-50 to-phish-indigo-50">
       <header className="bg-gradient-to-r from-phish-purple-600 to-phish-blue-600 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-5xl font-bold text-white drop-shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg leading-tight">
             🎵 Phish Statistics Dashboard
           </h1>
-          <p className="text-xl text-phish-purple-100 mt-3 font-medium">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-phish-purple-100 mt-2 sm:mt-3 font-medium">
             Explore the magic ✨ • Song stats, tour data & jam analytics
           </p>
         </div>
@@ -167,12 +167,12 @@ export default function Home() {
       {/* Navigation */}
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <main className="max-w-7xl mx-auto px-4 py-8 mt-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 mt-4 sm:mt-6 lg:mt-8">
         {activeTab === 'statistics' && (
-          <div className="grid gap-8">
+          <div className="grid gap-4 sm:gap-6 lg:gap-8">
             {/* Tour Statistics Overview */}
             <section>
-              <h2 className="text-3xl font-bold text-phish-purple-800 mb-6 flex items-center">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-phish-purple-800 mb-4 sm:mb-6 flex items-center">
                 🎪 Current Summer Tour Overview
               </h2>
               <TourStats shows={shows} songs={songs} />
@@ -180,17 +180,17 @@ export default function Home() {
 
             {/* Filters */}
             <section>
-              <h2 className="text-3xl font-bold text-phish-purple-800 mb-6 flex items-center">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-phish-purple-800 mb-4 sm:mb-6 flex items-center">
                 🎵 Song Analytics
               </h2>
               <FilterControls filters={filters} onFiltersChange={setFilters} songs={songs} />
             </section>
 
             {/* Charts */}
-            <section className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-phish-purple-200 p-8">
-                <h3 className="text-2xl font-bold mb-2 text-phish-blue-700">🔥 Most Frequently Played Songs</h3>
-                <p className="text-sm text-gray-600 mb-6">
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-phish-purple-200 p-4 sm:p-6 lg:p-8">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 text-phish-blue-700">🔥 Most Frequently Played Songs</h3>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
                   Top 10 songs by play count from {filteredSongs.length} filtered results
                 </p>
                 <SongChart 
@@ -198,9 +198,9 @@ export default function Home() {
                   type="timesPlayed" 
                 />
               </div>
-              <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-phish-green-200 p-8">
-                <h3 className="text-2xl font-bold mb-2 text-phish-green-700">🎸 Longest Jam Versions</h3>
-                <p className="text-sm text-gray-600 mb-6">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-phish-green-200 p-4 sm:p-6 lg:p-8">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 text-phish-green-700">🎸 Longest Jam Versions</h3>
+                <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
                   Top 10 songs by longest jam length from {filteredSongs.length} filtered results
                 </p>
                 <SongChart 
@@ -215,7 +215,7 @@ export default function Home() {
 
             {/* Song Table */}
             <section>
-              <h3 className="text-2xl font-bold text-phish-purple-800 mb-6 flex items-center">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-phish-purple-800 mb-4 sm:mb-6 flex items-center">
                 📊 Detailed Song Statistics
               </h3>
               <SongTable 

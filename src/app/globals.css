@@ -29,6 +29,81 @@ body {
       rgb(var(--background-end-rgb)) 100%
     );
   min-height: 100vh;
+  /* Prevent horizontal scrolling on mobile */
+  overflow-x: hidden;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 767px) {
+  body {
+    /* Prevent zoom on input focus for iOS */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
+/* iOS and Android specific optimizations */
+html {
+  /* Prevent rubber band scrolling on iOS */
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  /* Enable momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  /* Enable smooth scrolling */
+  scroll-behavior: smooth;
+  /* Prevent text selection on touch devices */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Allow text selection in input fields and content areas */
+  height: 100%;
+  overflow: auto;
+}
+
+/* Allow text selection in specific elements */
+input, textarea, [contenteditable] {
+  -webkit-user-select: auto;
+  -khtml-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+}
+
+/* Touch-friendly buttons */
+button, [role="button"], a {
+  /* Minimum touch target size */
+  min-height: 44px;
+  min-width: 44px;
+  /* Remove tap highlights */
+  -webkit-tap-highlight-color: transparent;
+  /* Prevent text selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Fix for iOS Safari input zoom */
+  input[type="text"], input[type="number"], select, textarea {
+    font-size: 16px;
+  }
+  
+  /* Fix for iOS Safari 100vh issue */
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
 }
 
 /* Safari-specific compatibility fixes */
@@ -68,6 +143,63 @@ body {
     display: flex;
     flex-wrap: wrap;
   }
+}
+
+/* Mobile-specific scrolling improvements */
+@media (max-width: 767px) {
+  /* Improve scroll performance on mobile */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Android specific fixes */
+@media screen and (-webkit-device-pixel-ratio: 2) and (orientation: portrait) {
+  /* Fix Android Chrome viewport issues */
+  .min-h-screen {
+    min-height: calc(100vh - env(keyboard-inset-height, 0px));
+  }
+}
+
+/* Sticky navigation fix for mobile */
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+/* Improve focus states for accessibility */
+@media (prefers-reduced-motion: no-preference) {
+  :focus {
+    outline: 2px solid #7c3aed;
+    outline-offset: 2px;
+  }
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 @layer utilities {

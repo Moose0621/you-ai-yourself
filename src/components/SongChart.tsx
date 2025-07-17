@@ -73,21 +73,21 @@ export function SongChart({ songs, type }: SongChartProps) {
         }
         
         return (
-          <div key={`${song.slug}-${index}`} className="flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
-            <div className="w-32 text-sm text-gray-700 truncate font-medium" title={song.name}>
+          <div key={`${song.slug}-${index}`} className="flex items-center space-x-2 sm:space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
+            <div className="w-24 sm:w-32 text-xs sm:text-sm text-gray-700 truncate font-medium" title={song.name}>
               {song.name}
             </div>
-            <div className="flex-1 bg-gray-200 rounded-full h-5 shadow-inner">
+            <div className="flex-1 bg-gray-200 rounded-full h-4 sm:h-5 shadow-inner">
               <div
-                className={`${barColor} h-5 rounded-full transition-all duration-500 shadow-sm`}
+                className={`${barColor} h-4 sm:h-5 rounded-full transition-all duration-500 shadow-sm`}
                 style={{ width: `${percentage}%` }}
               ></div>
             </div>
-            <div className="w-16 text-sm text-gray-900 text-right font-semibold">
+            <div className="w-12 sm:w-16 text-xs sm:text-sm text-gray-900 text-right font-semibold">
               {displayValue}
             </div>
             {type === 'longestJam' && song.longestJam && (
-              <div className="w-20 text-xs text-phish-purple-600 truncate font-medium" title={`${song.longestJam.date} at ${song.longestJam.venue}`}>
+              <div className="hidden sm:block w-20 text-xs text-phish-purple-600 truncate font-medium" title={`${song.longestJam.date} at ${song.longestJam.venue}`}>
                 {song.longestJam.date}
               </div>
             )}
