@@ -18,23 +18,53 @@ class SimpleLocalPhishApi {
     try {
       console.log('🔄 Fetching processed data...')
       
-      // Use fetch to load the JSON data - more Safari compatible
-      const response = await fetch('/processed-data.json')
-      if (!response.ok) {
-        throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`)
+      // Check if we're in server or client context
+      const isServer = typeof window === 'undefined'
+      
+      if (isServer) {
+        // Server-side: use direct import for better compatibility
+        const processedData = await import('../../public/processed-data.json')
+        this.songs = processedData.default.songs as Song[]
+        this.shows = processedData.default.shows as Show[]
+        this.initialized = true
+        console.log('✅ Server: Initialized with direct import -', this.songs.length, 'songs and', this.shows.length, 'shows')
+      } else {
+        // Client-side: use fetch with timeout for better browser compatibility
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+        
+        try {
+          const response = await fetch('/processed-data.json', {
+            signal: controller.signal,
+            headers: {
+              'Cache-Control': 'no-cache',
+              'Content-Type': 'application/json'
+            }
+          })
+          clearTimeout(timeoutId)
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`)
+          }
+          
+          console.log('📊 Parsing JSON data...')
+          const processedData = await response.json()
+          
+          this.songs = processedData.songs as Song[]
+          this.shows = processedData.shows as Show[]
+          this.initialized = true
+          
+          console.log('✅ Client: Initialized with fetch -', this.songs.length, 'songs and', this.shows.length, 'shows')
+        } catch (fetchError) {
+          clearTimeout(timeoutId)
+          throw fetchError
+        }
       }
-      
-      const processedData = await response.json()
-      
-      this.songs = processedData.songs as Song[]
-      this.shows = processedData.shows as Show[]
-      this.initialized = true
-      
-      console.log('✅ Initialized with', this.songs.length, 'songs and', this.shows.length, 'shows')
     } catch (error) {
       console.error('❌ Failed to initialize data:', error)
       // Fallback: try to import directly if fetch fails
       try {
+        console.log('🔄 Trying fallback import...')
         const processedData = await import('../../public/processed-data.json')
         this.songs = processedData.default.songs as Song[]
         this.shows = processedData.default.shows as Show[]
@@ -118,7 +148,8 @@ class SimpleLocalPhishApi {
    */
   async getTopSongsByLength(limit: number = 20): Promise<Song[]> {
     return [...this.songs]
-      .sort((a, b) => b.averageLength - a.averageLength)
+      .filter(song => song.averageLength != null && song.averageLength > 0)
+      .sort((a, b) => (b.averageLength || 0) - (a.averageLength || 0))
       .slice(0, limit)
   }
 

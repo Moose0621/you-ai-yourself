@@ -53,7 +53,7 @@ export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }
       
       <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-2">
         <div>
-          <span className="font-medium">Avg:</span> {song.averageLength.toFixed(1)}m
+          <span className="font-medium">Avg:</span> {song.averageLength ? `${song.averageLength.toFixed(1)}m` : 'N/A'}
         </div>
         <div>
           <span className="font-medium">Longest:</span> {song.longestJam ? `${song.longestJam.length.toFixed(1)}m` : 'N/A'}
@@ -146,7 +146,7 @@ export function SongTable({ songs, sortBy, sortOrder, onSortChange, onTagClick }
                   <div className="text-sm text-gray-900">{song.timesPlayed}</div>
                 </td>
                 <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{song.averageLength.toFixed(1)}m</div>
+                  <div className="text-sm text-gray-900">{song.averageLength ? `${song.averageLength.toFixed(1)}m` : 'N/A'}</div>
                 </td>
                 <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap hidden lg:table-cell">
                   {song.longestJam ? (

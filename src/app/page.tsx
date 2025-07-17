@@ -37,9 +37,9 @@ export default function Home() {
         setError(null) // Clear any previous errors
         console.log('🎵 Loading Phish data...')
         
-        // Add timeout to prevent infinite loading
+        // Add timeout to prevent infinite loading - reduced for Safari
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Data loading timeout - please refresh the page')), 10000)
+          setTimeout(() => reject(new Error('Data loading timeout - please refresh the page')), 15000)
         )
         
         // Load summer 2025 shows and song statistics with timeout
@@ -48,12 +48,18 @@ export default function Home() {
           phishApi.getSongStats()
         ])
         
-        const [showsData, songsData] = await Promise.race([dataPromise, timeoutPromise]) as [Show[], Song[]]
+        const result = await Promise.race([dataPromise, timeoutPromise])
+        const [showsData, songsData] = result as [Show[], Song[]]
         
         console.log('📊 Loaded data:', { 
           shows: showsData.length, 
           songs: songsData.length 
         })
+        
+        // Validate data before setting state
+        if (!Array.isArray(showsData) || !Array.isArray(songsData)) {
+          throw new Error('Invalid data format received')
+        }
         
         // Log sample song data for debugging
         if (songsData.length > 0) {
@@ -83,7 +89,7 @@ export default function Home() {
       return false
     }
     // Length filter - use the longest jam length if available, otherwise average length
-    const songLength = song.longestJam?.length || song.averageLength
+    const songLength = song.longestJam?.length || song.averageLength || 0
     if (songLength < filters.minLength || songLength > filters.maxLength) {
       return false
     }
@@ -104,8 +110,8 @@ export default function Home() {
         return (a.timesPlayed - b.timesPlayed) * multiplier
       case 'averageLength':
         // Sort by longest jam length if available, otherwise average length
-        const aLength = a.longestJam?.length || a.averageLength
-        const bLength = b.longestJam?.length || b.averageLength
+        const aLength = a.longestJam?.length || a.averageLength || 0
+        const bLength = b.longestJam?.length || b.averageLength || 0
         return (aLength - bLength) * multiplier
       case 'name':
         return a.name.localeCompare(b.name) * multiplier

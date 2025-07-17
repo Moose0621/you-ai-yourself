@@ -1,6 +1,6 @@
 import { phishApi } from '@/lib/phishApi'
-import { Song, Show } from '@/types/phish'
-import { songValidators, showValidators, dataExpectations } from '../testHelpers'
+import { Song } from '@/types/phish'
+import { songValidators, dataExpectations } from '../testHelpers'
 
 /**
  * Integration tests that verify the application works with real data patterns
@@ -176,11 +176,10 @@ describe('PhishApi Integration with Real Data Patterns', () => {
       // Make multiple concurrent requests
       const requests = await Promise.all([
         phishApi.getSongStats(),
-        phishApi.getRecentShows(),
         phishApi.getSummer2025Shows(),
         phishApi.getShowsByYear(2023),
-        phishApi.getSongData('you-enjoy-myself'),
-        phishApi.getSongData('harry-hood')
+        phishApi.getTopSongsByPlayCount(10),
+        phishApi.getAllTags()
       ])
       
       const end = performance.now()
@@ -189,14 +188,15 @@ describe('PhishApi Integration with Real Data Patterns', () => {
       expect(end - start).toBeLessThan(1000) // Under 1 second
       
       // All requests should return valid data
-      const [songs, recentShows, summer2025Shows, yearShows, song1, song2] = requests
+      const [songs, summer2025Shows, yearShows, topSongs, allTags] = requests
       
       expect(Array.isArray(songs)).toBe(true)
-      expect(Array.isArray(recentShows)).toBe(true)
       expect(Array.isArray(summer2025Shows)).toBe(true)
       expect(Array.isArray(yearShows)).toBe(true)
-      expect(song1 === null || songValidators.isValidSong(song1)).toBe(true)
-      expect(song2 === null || songValidators.isValidSong(song2)).toBe(true)
+      
+      // Validate response structure
+      expect(Array.isArray(topSongs)).toBe(true)
+      expect(Array.isArray(allTags)).toBe(true)
     })
 
     it('should process large datasets efficiently', async () => {
@@ -295,7 +295,7 @@ describe('PhishApi Integration with Real Data Patterns', () => {
     it('should handle UI component data requirements', async () => {
       const [songs, shows] = await Promise.all([
         phishApi.getSongStats(),
-        phishApi.getRecentShows()
+        phishApi.getSummer2025Shows()
       ])
       
       // Verify data is suitable for UI components regardless of size
@@ -303,8 +303,8 @@ describe('PhishApi Integration with Real Data Patterns', () => {
       expect(shows.length).toBeGreaterThan(0)
       
       // Calculate stats that UI components would need
-      const totalPlays = songs.reduce((sum, song) => sum + song.timesPlayed, 0)
-      const averageLength = songs.reduce((sum, song) => sum + song.averageLength, 0) / songs.length
+      const totalPlays = songs.reduce((sum: number, song: Song) => sum + song.timesPlayed, 0)
+      const averageLength = songs.reduce((sum: number, song: Song) => sum + song.averageLength, 0) / songs.length
       
       expect(totalPlays).toBeGreaterThan(0)
       expect(averageLength).toBeGreaterThan(0)

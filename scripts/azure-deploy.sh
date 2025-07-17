@@ -200,23 +200,25 @@ if [ -d "public" ]; then
     cp -r public "$BUILD_DIR/"
 fi
 
-# For Azure, copy the regular build instead of standalone
-log_info "✓ Using regular Next.js build for Azure compatibility"
-if [ -d ".next" ]; then
-    cp -r .next "$BUILD_DIR/"
-    log_success "✓ .next directory copied"
+# For Azure, use standalone build for faster deployment
+log_info "✓ Using Next.js standalone build for Azure optimization"
+if [ -d ".next/standalone" ]; then
+    # Copy standalone build
+    cp -r .next/standalone/* "$BUILD_DIR/"
+    
+    # Copy .next/static to standalone build
+    mkdir -p "$BUILD_DIR/.next/static"
+    cp -r .next/static/* "$BUILD_DIR/.next/static/"
+    
+    # Copy public directory if not already copied
+    if [ -d "public" ] && [ ! -d "$BUILD_DIR/public" ]; then
+        cp -r public "$BUILD_DIR/"
+    fi
+    
+    log_success "✓ Standalone build with static files copied"
 else
-    log_error "No .next build directory found!"
+    log_error "No .next/standalone directory found! Run 'npm run build' first."
     exit 1
-fi
-
-# Copy node_modules for production
-if [ -d "node_modules" ]; then
-    log_info "Copying node_modules (this may take a while)..."
-    cp -r node_modules "$BUILD_DIR/"
-    log_success "✓ node_modules copied"
-else
-    log_warning "No node_modules directory found - will rely on Azure build"
 fi
 
 # Copy configuration files

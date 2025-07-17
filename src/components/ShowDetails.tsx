@@ -255,7 +255,7 @@ export function ShowDetails({ show, onBack }: ShowDetailsProps) {
                         <>
                           <div className="flex items-center space-x-1">
                             <ClockIcon className="w-4 h-4" />
-                            <span>~{metadata.averageLength.toFixed(1)}m avg</span>
+                            <span>~{metadata.averageLength ? `${metadata.averageLength.toFixed(1)}m` : 'N/A'} avg</span>
                           </div>
                           <div className="text-xs">
                             Played {metadata.timesPlayed} times
